@@ -6,11 +6,9 @@ lead: Add packages.fyshos.com to apt, verify it, and remove it again if you chan
 ## 1. Install the signing key
 
 The archive is signed, so apt needs the public key before it will trust an
-update. Keep it out of the deprecated global keyring and drop it in
-`/usr/share/keyrings` instead:
+update. The following commands set up the trust.
 
 ```sh
-sudo install -m 0755 -d /usr/share/keyrings
 sudo curl -fsSL https://packages.fyshos.com/fyshos-archive-keyring.gpg \
   -o /usr/share/keyrings/fyshos-archive-keyring.gpg
 sudo chmod 0644 /usr/share/keyrings/fyshos-archive-keyring.gpg
@@ -39,26 +37,14 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/fysho
   | sudo tee /etc/apt/sources.list.d/fyshos.list > /dev/null
 ```
 
-## 3. Update and install
+## 3. Update and test
 
 ```sh
 sudo apt update
-sudo apt install fysh-desktop
+apt search "Fyne Applications"
 ```
 
-## Checking what you added
-
-Confirm apt is reading the archive and which key it trusts:
-
-```sh
-apt policy
-gpg --show-keys /usr/share/keyrings/fyshos-archive-keyring.gpg
-```
-
-`apt policy <package>` shows which version apt would install and which archive
-it would come from.
-
-## Removing the archive
+## Removing the source
 
 ```sh
 sudo rm -f /etc/apt/sources.list.d/fyshos.sources \
@@ -84,11 +70,3 @@ with `timedatectl`; if the clock is right, the archive needs reindexing.
 archive does not publish. The archive carries `amd64`, `arm64` and `i386`;
 pin one with `arch=` in the source definition.
 
-## Browsing by hand
-
-The archive is a plain static tree, so you can read it in a browser or fetch a
-package directly:
-
-- [/dists/stable/Release](/dists/stable/Release) — the signed index
-- [/dists/stable/main/binary-amd64/Packages](/dists/stable/main/binary-amd64/Packages) — the amd64 package list
-- [/pool/main/](/pool/main/) — the `.deb` files themselves

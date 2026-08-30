@@ -130,25 +130,6 @@ gpg --quick-generate-key "FyshOS Archive Signing Key <andy@andy.xyz>" rsa4096 si
 gpg --list-secret-keys --keyid-format=long
 ```
 
-## Deployment
-
-`.github/workflows/deploy.yml` runs on every push to `main`: it runs the Go
-tests, runs `fyshpkg check` to confirm the committed metadata still matches the
-pool, builds the site with Hugo, and deploys to GitHub Pages.
-
-Enable **Settings → Pages → Source: GitHub Actions** on the repository, and set
-the custom domain to `packages.fyshos.com`. `static/CNAME` keeps that setting
-in the build output.
-
-### Limits worth knowing
-
-GitHub Pages caps a published site at **1 GB** with a **100 MB** limit per
-file, and asks that sites stay under 100 GB of bandwidth a month. That is
-comfortable for a desktop distribution's own packages, but the pool grows with
-every release you keep. Prune old versions with `fyshpkg rm -v <version>` when
-they stop being useful. Do not put `.deb` files in Git LFS — Pages serves LFS
-pointers, not the file.
-
 ## Archive layout
 
 One suite (`stable`) and one component (`main`), built for `amd64`, `arm64`
