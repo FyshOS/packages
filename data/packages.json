@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-30T18:57:07.226461881Z",
+  "generated": "2026-08-30T20:17:51.640194216Z",
   "suites": [
     "stable"
   ],
@@ -12,7 +12,7 @@
       "description": "Fyne Applications",
       "homepage": "https://apps.fyne.io",
       "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
-      "installedSize": 28489728,
+      "installedSize": 26493952,
       "downloads": [
         {
           "architecture": "amd64",

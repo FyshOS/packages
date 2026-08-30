@@ -2,8 +2,8 @@ Origin: FyshOS
 Label: FyshOS
 Suite: stable
 Codename: stable
-Date: Sun, 30 Aug 2026 18:56:59 UTC
-Valid-Until: Tue, 29 Sep 2026 18:56:59 UTC
+Date: Sun, 30 Aug 2026 20:17:46 UTC
+Valid-Until: Mon, 30 Aug 2027 20:17:46 UTC
 Architectures: amd64 arm64 i386
 Components: main
 Description: FyshOS package repository

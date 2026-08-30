@@ -16,7 +16,7 @@
     "i386"
   ],
   "signingKey": "F50F56324C60D2017F14B9E86B164CA9E9248442",
-  "validDays": 30,
+  "validDays": 365,
   "package": {
     "maintainer": "Andy Williams <andy@fyne.io>",
     "section": "misc",

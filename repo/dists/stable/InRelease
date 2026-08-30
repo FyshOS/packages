@@ -5,8 +5,8 @@ Origin: FyshOS
 Label: FyshOS
 Suite: stable
 Codename: stable
-Date: Sun, 30 Aug 2026 18:56:59 UTC
-Valid-Until: Tue, 29 Sep 2026 18:56:59 UTC
+Date: Sun, 30 Aug 2026 20:17:46 UTC
+Valid-Until: Mon, 30 Aug 2027 20:17:46 UTC
 Architectures: amd64 arm64 i386
 Components: main
 Description: FyshOS package repository
@@ -32,17 +32,17 @@ SHA256:
  6efdd23208b33ac028eab3ef05749b1cca87ca2731bef83538f9cf387e9de789               80 main/binary-i386/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE9Q9WMkxg0gF/FLnoaxZMqekkhEIFAmqUfPsACgkQaxZMqekk
-hELUxhAAlLGpHhuerXpyrLJOCihiTk4pzE6k6PwtLLgNJqUbJVNKbnfFqKZ0xO6W
-wKTasMAl+RjukQKabeQu08q15saIsQq4qoD9Gwaadml0nj5q8J8XOgve5n7XRZ9t
-NX3UOQ1lPGCGdLXih+fcNU8wihcPInxO7LbJvu8yAM8YBOp/HDzQqB/z+UDoQH7Z
-9uXBqXOkwPt9a7PwIUnkuHK9WtnKjA/deUgf+3FqkpNBA2rk4dwr83B3gXU/EqZv
-aRBRNuHjjC6rMQL0IFe0XYgsDN03wqpTMZHEdP3GnlS47dndM7wVN4UekQoMqif0
-dhU0owP2/DFr/xM090JV9xqeYX/8qzvV/Qy9u1FFk2VVfw4ES1UIOFMLZK7FghFA
-yf3tZdD75fSbVJ5PyxoXmNeILhpPZ9ja7vGYtR6UXUMSH70X972jns7u9inTCVGU
-ZNP/PuFYLeVVZYK4JgYqysTrnltN8Nn7AO11AVrKSMP8ufwu3KxI5Gt/egUM8QvY
-/Ycw2rVihAuBwaaigslKYcesYv6Dp+jv/fEj13TcRZr3DLjTdit7uZQKesyNgl99
-wZiKa6HEXwkPX9LlozOcAf4x8DovllYSvOOwmpPTgdOLWVQvxhFg4A/UfOOPJgLt
-ci6dIiXEGiuQativV99hmT97ljeBZE29b2B+yEwZU1zOv1CrcCM=
-=nBgl
+iQIzBAEBCgAdFiEE9Q9WMkxg0gF/FLnoaxZMqekkhEIFAmqUj+oACgkQaxZMqekk
+hEIcxBAAqJmySz6H90HxD6TvNitJeunyP0Ci7JVYoCDaynORRU0lmcbcajJpgVdA
+uQfsqhOk+/OFoVko+uuTt7q9vEMckJzSogXdtJQvDE5FiQ1ET0Msk+st/leZkjhw
+1jCtGqEhViOHJLBalWO8ax8irT8DZDWlJFgwHPiZjwgs6xjfNth2obikbZxVAHOi
+IGngrkUPZrqwXFS/NqwmDjl5rLEocSeULT10E2f3kCuhnB6eQ+ghiDxiIcUGzD0j
+rHHGoIM4wuj91Wd75cbu7EangjLKnhpv2IzDYudimmZ6CTfOmAvk6/b7MUo0hzmK
+0mx8zxwE+jXmtR1OXAdVBOUcPpgzyxtmDlKRUr2IAmK4XJMLKapiNa0KoUmKKYQ1
+PYi1PCdmJsSbq21Tlr39q06R0GrIvoEVDZVFhjJY+rOczgr1eDpiPAfa/qumLIZi
+Tk869HFLmuikLQEJkwGvwFNNygFQhMhLs0RiUXlCpeq12GXuvTQkA4VxK6VvIfpq
+niLfRERVlviLfsMZBUZLJQKxcyRvSGXpy60+CDIR+rFq1uNzdS0n+NpttFXiS6qK
++W8IQT9Mnow5TF0WU65uA/JdqcbDzIg5hpI9DEjazdk+Pe87dB92CWx5UbVisXQ7
+A0TKKzHZPrQPmhLDECfrupuPBQHsnHgrKlDAKRqUz+hDZJW6BkE=
+=LIxr
 -----END PGP SIGNATURE-----
