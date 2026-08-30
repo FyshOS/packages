@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // sign produces InRelease (inline signature) and Release.gpg (detached) beside
@@ -34,9 +35,26 @@ func (c *Config) gpg(args ...string) error {
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("gpg %v: %w: %s", args, err, stderr.String())
+		return fmt.Errorf("gpg %v: %w: %s%s", args, err,
+			strings.TrimSpace(stderr.String()), passphraseHint(stderr.String()))
 	}
 	return nil
+}
+
+// passphraseHint recognises gpg failing because it could not ask for the key's
+// passphrase, which is the usual reason signing breaks: there is no terminal
+// for pinentry to prompt on, or GPG_TTY is not set.
+func passphraseHint(stderr string) string {
+	for _, sign := range []string{"Inappropriate ioctl", "No pinentry", "no pinentry", "Operation cancelled"} {
+		if strings.Contains(stderr, sign) {
+			return "\n  gpg could not ask for the signing key's passphrase." +
+				"\n  Run this from a terminal, and make sure GPG_TTY is set:" +
+				"\n    export GPG_TTY=$(tty)          # bash, zsh" +
+				"\n    set -gx GPG_TTY (tty)          # fish" +
+				"\n  gpg-agent then caches the passphrase for later runs."
+		}
+	}
+	return ""
 }
 
 // ExportKey writes the archive's public signing key into the given directory,

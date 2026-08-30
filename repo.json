@@ -4,10 +4,18 @@
   "origin": "FyshOS",
   "label": "FyshOS",
   "description": "FyshOS package repository",
-  "suites": ["stable"],
-  "components": ["main"],
-  "architectures": ["amd64", "arm64", "i386"],
-  "signingKey": "",
+  "suites": [
+    "stable"
+  ],
+  "components": [
+    "main"
+  ],
+  "architectures": [
+    "amd64",
+    "arm64",
+    "i386"
+  ],
+  "signingKey": "F50F56324C60D2017F14B9E86B164CA9E9248442",
   "validDays": 30,
   "package": {
     "maintainer": "Andy Williams <andy@fyne.io>",

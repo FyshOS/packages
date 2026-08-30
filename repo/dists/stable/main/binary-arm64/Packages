@@ -1,0 +1,16 @@
+Package: fyne-applications
+Version: 0.3.0-5
+Architecture: arm64
+Maintainer: Andy Williams <andy@fyne.io>
+Installed-Size: 25873
+Depends: libc6, libgl1, libx11-6, libxcursor1, libxi6, libxinerama1, libxrandr2, libxxf86vm1
+Section: misc
+Priority: optional
+Homepage: https://apps.fyne.io
+Description: Fyne Applications
+Filename: pool/main/f/fyne-applications/fyne-applications_0.3.0-5_arm64.deb
+Size: 10029768
+MD5sum: 50a2d9c401fd9f96491571572d581eee
+SHA1: 5b3b1c694022e3938de9acda0582a590ec9d876b
+SHA256: 2563eb9053fe6a84aaf309a0226c00fc8839116f9f7ce069f6bb59734690a6d0
+

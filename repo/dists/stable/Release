@@ -1,0 +1,29 @@
+Origin: FyshOS
+Label: FyshOS
+Suite: stable
+Codename: stable
+Date: Sun, 30 Aug 2026 18:56:59 UTC
+Valid-Until: Tue, 29 Sep 2026 18:56:59 UTC
+Architectures: amd64 arm64 i386
+Components: main
+Description: FyshOS package repository
+MD5Sum:
+ fdc33a942e14e526cc8d98146ce1fbf5              568 main/binary-amd64/Packages
+ df67f4d08678b4bab1494b6cfa02987e              395 main/binary-amd64/Packages.gz
+ fcc1c712f6778645ebd5fe848bb3865c               81 main/binary-amd64/Release
+ f25d070aabb785e27aa509eae31e41a3              568 main/binary-arm64/Packages
+ b34d0ba773f2befa3d6b3311070060b0              395 main/binary-arm64/Packages.gz
+ 8df3d956882aae4dd6e70f8638006b4c               81 main/binary-arm64/Release
+ 8c97705ba1c1636c9a042e693051cde3              566 main/binary-i386/Packages
+ a6675de53c500e85b19c3db12b4816f4              397 main/binary-i386/Packages.gz
+ 4445fafb2cbffb767be666600f1b1cd4               80 main/binary-i386/Release
+SHA256:
+ 53f48e466d113d8b574195e19cfc5484ebb61e6d185c5ca7960c806034930a45              568 main/binary-amd64/Packages
+ 8bd5e13cf5a943c8ce2b58678a363b379bd0768f32e1169546d4538f738ef8ac              395 main/binary-amd64/Packages.gz
+ ee4b6be87f354c8bbce231a9d8b6b616769e48c65a0028b4d06fff1fe0b28a10               81 main/binary-amd64/Release
+ 94d73a10ba7c7ac8060e6f63e14d007ac54f84984dd879462f2c801088162dc8              568 main/binary-arm64/Packages
+ 1e57dc3a59fdba1a6620ceabd49595a9ded22445ce312a93b0d61e6f7c44f962              395 main/binary-arm64/Packages.gz
+ 8ba103997c57b511eaa71d5ece1c7b45b947ef734c13e27c0a10f0825953e594               81 main/binary-arm64/Release
+ 87f177b24bffdf024e76c350f3de4b49816a65ba445f1729aa70f610174c4cbe              566 main/binary-i386/Packages
+ f1515456a2eed9527dd9799cb36b684249d8979e8045196f527bb1f055a1de14              397 main/binary-i386/Packages.gz
+ 6efdd23208b33ac028eab3ef05749b1cca87ca2731bef83538f9cf387e9de789               80 main/binary-i386/Release

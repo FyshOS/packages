@@ -1,8 +1,41 @@
 {
-  "generated": "2026-08-30T17:43:48.423364875Z",
+  "generated": "2026-08-30T18:57:07.226461881Z",
   "suites": [
     "stable"
   ],
   "packages": [
+    {
+      "name": "fyne-applications",
+      "version": "0.3.0-5",
+      "component": "main",
+      "section": "misc",
+      "description": "Fyne Applications",
+      "homepage": "https://apps.fyne.io",
+      "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
+      "installedSize": 28489728,
+      "downloads": [
+        {
+          "architecture": "amd64",
+          "version": "0.3.0-5",
+          "filename": "pool/main/f/fyne-applications/fyne-applications_0.3.0-5_amd64.deb",
+          "size": 11011440,
+          "sha256": "372ad260a44a66b2fb0686b00a2d037ec48fb01a16d0d72e328ad9acf1aa8ce8"
+        },
+        {
+          "architecture": "arm64",
+          "version": "0.3.0-5",
+          "filename": "pool/main/f/fyne-applications/fyne-applications_0.3.0-5_arm64.deb",
+          "size": 10029768,
+          "sha256": "2563eb9053fe6a84aaf309a0226c00fc8839116f9f7ce069f6bb59734690a6d0"
+        },
+        {
+          "architecture": "i386",
+          "version": "0.3.0-5",
+          "filename": "pool/main/f/fyne-applications/fyne-applications_0.3.0-5_i386.deb",
+          "size": 10578076,
+          "sha256": "020627f7763a57c26f7a0c817efc3785b8617c8daff9939668b5b028d5a1381b"
+        }
+      ]
+    }
   ]
 }
