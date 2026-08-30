@@ -1,15 +1,20 @@
-<header class="site-header">
-  <div class="wrap header-inner">
-    <a class="brand" href="{{ "/" | relURL }}">
-      <span class="brand-mark" aria-hidden="true">≈</span>
-      <span class="brand-name">{{ .Site.Title }}</span>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="https://fyshos.com" class="nav-brand">
+      <img src="{{ "img/fish_onwhite.png" | relURL }}" alt="" class="nav-logo">
+      <span>FyshOS<span class="nav-sub">Packages</span></span>
     </a>
-    <nav>
+    <div class="nav-links">
       {{ $current := .RelPermalink }}
       {{ range .Site.Menus.main }}
-        <a href="{{ .URL | relURL }}"{{ if eq $current (.URL | relURL) }} class="active" aria-current="page"{{ end }}>{{ .Name }}</a>
+      <a href="{{ .URL | relURL }}" class="nav-link{{ if eq $current (.URL | relURL) }} active{{ end }}"
+         {{ if eq $current (.URL | relURL) }}aria-current="page"{{ end }}>{{ .Name }}</a>
       {{ end }}
-      <a href="{{ .Site.Params.github }}" rel="noopener">GitHub</a>
-    </nav>
+      <a href="{{ .Site.Params.github }}" class="nav-link" rel="noopener">GitHub</a>
+      <a href="https://fyshos.com/download/" class="nav-link nav-cta">Download</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-</header>
+</nav>

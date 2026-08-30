@@ -1,228 +1,502 @@
-/* FyshOS packages — a small, dependency-free stylesheet.
-   Colours are defined once as tokens and swapped for the dark scheme. */
+/* packages.fyshos.com
+ *
+ * Tokens, typography and the neon backdrop are taken from the main FyshOS
+ * site so the two read as one property. Everything below the "Archive" rule
+ * is particular to this site: prose pages and the package table.
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 :root {
-  color-scheme: light dark;
-
-  --bg: #f7fafb;
-  --surface: #ffffff;
-  --border: #dbe4e8;
-  --text: #14262e;
-  --muted: #5b7280;
-  --accent: #0e7c86;
-  --accent-soft: #e2f2f3;
-  --code-bg: #0f2027;
-  --code-text: #d7e6ea;
-
-  --radius: 10px;
-  --wrap: 52rem;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --bg: #0f1117;
+  --bg-surface: #181a24;
+  --bg-card: #1e2130;
+  /* Same card colour, alpha blended so the neon backdrop reads through large
+   * surfaces like the package table rather than being blanked out by them. */
+  --bg-card-alpha: rgba(30, 33, 48, 0.55);
+  /* Code blocks run the full width too, so they get the same treatment, kept
+   * darker than the table because text sits directly on it. */
+  --bg-code-alpha: rgba(15, 17, 23, 0.72);
+  --text: #e4e6f0;
+  --text-muted: #9498b0;
+  --accent: #4dd0e1;
+  --accent-hover: #6be0ef;
+  --green: #7ecf6a;
+  --amber: #e3b23c;
+  --red: #e2685c;
+  --border: #2a2d3e;
+  --radius: 12px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0d1719;
-    --surface: #132327;
-    --border: #26414a;
-    --text: #e6f1f3;
-    --muted: #91a9b2;
-    --accent: #4cc9d4;
-    --accent-soft: #16333a;
-    --code-bg: #081418;
-    --code-text: #cfe4e9;
-  }
+html {
+  scroll-behavior: smooth;
+  /* The base colour lives here so body::before can paint behind the content. */
+  background: var(--bg);
+  /* The drifting backdrop is transformed, so keep it from widening the page. */
+  overflow-x: clip;
 }
-
-* { box-sizing: border-box; }
 
 body {
-  margin: 0;
-  background: var(--bg);
+  position: relative;
+  font-family: var(--font);
+  background: transparent;
   color: var(--text);
-  font: 16px/1.65 var(--sans);
+  line-height: 1.7;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
-}
-
-.wrap {
-  width: 100%;
-  max-width: var(--wrap);
-  margin-inline: auto;
-  padding-inline: 1.25rem;
-}
-
-a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
-a:hover { text-decoration-thickness: 2px; }
-
-/* Header ------------------------------------------------------------------ */
-
-.site-header {
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.header-inner {
+  /* Keeps the footer at the bottom on short pages, so the backdrop does not
+   * run on below it. The backdrop layers are absolutely positioned, so they
+   * stay out of this flex flow. */
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  min-height: 3.75rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: .55rem;
-  font-weight: 650;
-  color: var(--text);
+/* === Neon backdrop ===
+ * Anchored to the top of the document (not the viewport) so it fades out as
+ * you scroll away, and masked so the grid dissolves into the flat background.
+ */
+body::before,
+body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  height: 1400px;
+  background:
+    radial-gradient(52rem 30rem at 8% -6%, rgba(77, 208, 225, 0.20), transparent 68%),
+    radial-gradient(46rem 28rem at 96% -2%, rgba(108, 132, 255, 0.14), transparent 68%),
+    repeating-linear-gradient(90deg, rgba(77, 208, 225, 0.085) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(0deg, rgba(77, 208, 225, 0.085) 0 1px, transparent 1px 64px);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.5) 42%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.5) 42%, transparent 100%);
+}
+
+/* A slow drifting bloom over the grid, so it reads as lit rather than static. */
+body::after {
+  height: 900px;
+  background:
+    radial-gradient(28rem 18rem at 22% 12%, rgba(77, 208, 225, 0.14), transparent 62%),
+    radial-gradient(24rem 16rem at 78% 4%, rgba(126, 207, 106, 0.07), transparent 62%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+  animation: neon-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes neon-drift {
+  from { transform: translate3d(-2%, 0, 0) scale(1); }
+  to   { transform: translate3d(2%, 1.5%, 0) scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
+}
+
+a {
+  color: var(--accent);
   text-decoration: none;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--surface);
-  font-size: 1.1rem;
-  line-height: 1;
+a:hover { color: var(--accent-hover); }
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-.site-header nav { display: flex; gap: 1.1rem; font-size: .95rem; }
-.site-header nav a { color: var(--muted); text-decoration: none; }
-.site-header nav a:hover,
-.site-header nav a.active { color: var(--accent); }
+/* === Navbar === */
 
-/* Content ----------------------------------------------------------------- */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(15, 17, 23, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
 
-main { padding-block: 3rem 4rem; }
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
 
-.hero { margin-bottom: 2.5rem; }
-.hero h1 { font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.15; margin: 0 0 .5rem; }
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1.2rem;
+}
 
-.lead { font-size: 1.15rem; color: var(--muted); margin: 0 0 1.5rem; }
+.nav-brand:hover { color: var(--text); }
 
-.prose h1 { font-size: clamp(1.9rem, 4vw, 2.4rem); margin: 0 0 .75rem; }
-.prose h2 { font-size: 1.4rem; margin: 2.5rem 0 .75rem; }
-.prose h3 { font-size: 1.1rem; margin: 2rem 0 .5rem; }
-.prose p, .prose ul, .prose ol { margin: 0 0 1rem; }
-.prose li { margin-bottom: .35rem; }
+/* "Packages" trails the wordmark, so this reads as a section of the main site
+ * rather than a separate product. */
+.nav-sub {
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: .4rem;
+}
 
-.muted { color: var(--muted); font-size: .9rem; }
+.nav-logo {
+  height: 32px;
+  width: auto;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-cta {
+  color: var(--bg) !important;
+  background: var(--accent);
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.nav-cta:hover {
+  background: var(--accent-hover);
+  color: var(--bg) !important;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-muted);
+  border-radius: 2px;
+}
+
+/* === Archive === */
+
+main {
+  flex: 1;
+  padding-top: 64px; /* clears the fixed navbar */
+  padding-bottom: 40px;
+}
+
+.hero {
+  padding: 72px 0 32px;
+  max-width: 52rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lead {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-top: 14px;
+}
+
+/* The column is as wide as the container so tables and code blocks have room,
+ * but running text is capped at a readable measure. */
+.prose { padding-block: 56px 0; }
+
+.prose > p,
+.prose > ul,
+.prose > ol,
+.prose > h1,
+.prose > h2,
+.prose > h3,
+.prose > .lead,
+.prose > .muted,
+.prose > .empty { max-width: 52rem; }
+
+.hero + .prose { padding-top: 0; }
+
+.prose h1 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.prose h1 + .lead { margin-bottom: 8px; }
+
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 48px 0 14px;
+  letter-spacing: -0.01em;
+}
+
+.prose h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 32px 0 10px;
+}
+
+.prose > :first-child { margin-top: 0; }
+.prose p, .prose ul, .prose ol { margin-bottom: 16px; }
+.prose ul, .prose ol { padding-left: 1.25rem; }
+.prose li { margin-bottom: 6px; }
+.prose strong { color: var(--text); font-weight: 600; }
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
 .empty {
-  padding: 1.25rem;
+  padding: 24px;
+  background: var(--bg-card-alpha);
   border: 1px dashed var(--border);
   border-radius: var(--radius);
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
-/* Code -------------------------------------------------------------------- */
+/* === Code === */
 
 code {
   font-family: var(--mono);
-  font-size: .9em;
-  background: var(--accent-soft);
-  padding: .12em .35em;
-  border-radius: 4px;
+  font-size: 0.88em;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.12em 0.38em;
+  border-radius: 5px;
 }
 
 pre {
   position: relative;
-  background: var(--code-bg);
-  color: var(--code-text);
-  padding: 1rem 1.1rem;
+  margin-bottom: 20px;
+  padding: 20px 22px;
+  background: var(--bg-code-alpha);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  line-height: 1.9;
   overflow-x: auto;
-  font-size: .875rem;
-  line-height: 1.6;
 }
 
-pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: var(--text);
+}
 
 .copy {
   position: absolute;
-  top: .5rem;
-  right: .5rem;
-  border: 1px solid rgba(255, 255, 255, .18);
-  background: rgba(255, 255, 255, .08);
-  color: var(--code-text);
-  border-radius: 6px;
-  padding: .2rem .5rem;
-  font: 600 .72rem/1.5 var(--sans);
+  top: 10px;
+  right: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font: 600 0.72rem/1.5 var(--font);
   cursor: pointer;
   opacity: 0;
-  transition: opacity .15s ease;
+  transition: opacity 0.15s, color 0.2s, border-color 0.2s;
 }
 
-pre:hover .copy, .copy:focus-visible { opacity: 1; }
-.copy:hover { background: rgba(255, 255, 255, .16); }
+pre:hover .copy,
+.copy:focus-visible { opacity: 1; }
 
-/* Package table ----------------------------------------------------------- */
+.copy:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
 
-.table-scroll { overflow-x: auto; margin-bottom: 1rem; }
+/* === Package table === */
+
+.table-scroll {
+  overflow-x: auto;
+  background: var(--bg-card-alpha);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+
+/* The header strip sits a little heavier than the body so the column labels
+ * hold up against whatever the backdrop is doing behind them. */
+.packages thead th { background: rgba(24, 26, 36, 0.65); }
 
 .packages {
   width: 100%;
   border-collapse: collapse;
-  font-size: .93rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
+  min-width: 620px;
 }
 
-.packages th, .packages td {
+.packages th,
+.packages td {
+  padding: 14px 16px;
   text-align: left;
-  padding: .7rem .85rem;
-  border-bottom: 1px solid var(--border);
   vertical-align: top;
+  border-bottom: 1px solid var(--border);
 }
 
 .packages thead th {
-  font-size: .78rem;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .05em;
-  color: var(--muted);
-  background: var(--bg);
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .packages tbody tr:last-child th,
 .packages tbody tr:last-child td { border-bottom: 0; }
 
-.packages .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.pkg-name { display: block; font-weight: 650; }
-.pkg-desc { display: block; font-weight: 400; color: var(--muted); font-size: .85rem; }
+.packages tbody tr:hover { background: rgba(255, 255, 255, 0.035); }
+
+/* Let the name column take the slack so a wide table does not spread the
+ * version and download columns across the page. */
+.packages th:first-child { width: 60%; }
+
+.pkg-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.pkg-desc {
+  display: block;
+  font-weight: 400;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
 
 /* One list item per architecture, each on its own line so a package with
-   several builds still reads as a single row. */
-.arches { list-style: none; margin: 0; padding: 0; }
-.arches li { display: flex; align-items: baseline; gap: .4rem; white-space: nowrap; }
-.arches li + li { margin-top: .25rem; }
-.arches a { font-family: var(--mono); font-size: .88em; }
-.arch-size { color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; }
+ * several builds still reads as a single row. */
+.arches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.arches li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.arches li + li { margin-top: 6px; }
+
+.arches a {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.arch-size {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
 
 .arch-lag {
-  color: var(--muted);
-  font-size: .75rem;
+  color: var(--amber);
+  font-size: 0.72rem;
+  font-family: var(--mono);
   border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0 .3em;
+  border-radius: 5px;
+  padding: 0 0.4em;
   cursor: help;
 }
 
-/* Footer ------------------------------------------------------------------ */
+/* === Footer === */
 
-.site-footer {
+.footer {
   border-top: 1px solid var(--border);
-  background: var(--surface);
-  padding-block: 2rem;
-  font-size: .92rem;
+  padding: 32px 0;
+  margin-top: 40px;
 }
 
-.site-footer p { margin: 0 0 .35rem; }
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* === Small screens === */
+
+@media (max-width: 760px) {
+  .nav-toggle { display: flex; }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 12px 24px 18px;
+    background: rgba(15, 17, 23, 0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links.open { display: flex; }
+  .nav-cta { margin-left: 0; text-align: center; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
