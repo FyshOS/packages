@@ -1,0 +1,58 @@
+baseURL = "https://packages.fyshos.com/"
+languageCode = "en-gb"
+title = "FyshOS Packages"
+
+enableRobotsTXT = true
+disableKinds = ["taxonomy", "term"]
+enableGitInfo = false
+
+# The Debian archive lives in repo/ and is mounted straight into the site root,
+# so `hugo` emits public/dists/... and public/pool/... alongside the web pages.
+# cmd/ is not mounted anywhere, so nothing in it is ever published.
+[module]
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "repo"
+    target = "static"
+
+[params]
+  description = "The official Debian package repository for FyshOS."
+  suite = "stable"
+  component = "main"
+  keyFile = "fyshos-archive-keyring.asc"
+  github = "https://github.com/FyshOS"
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.highlight]
+  noClasses = false
+  style = "github-dark"
+
+[outputs]
+  home = ["HTML"]
+  page = ["HTML"]
+
+[[menus.main]]
+  name = "Install"
+  url = "/install/"
+  weight = 10
+
+[[menus.main]]
+  name = "Packages"
+  url = "/packages/"
+  weight = 20

@@ -1,0 +1,36 @@
+{{- /* Renders the package table from data/packages.json, which fyshpkg writes
+       on every index. Pass a section name to filter: {{< packages "x11" >}} */ -}}
+{{- $data := .Site.Data.packages -}}
+{{- $section := .Get 0 -}}
+{{- $list := $data.packages | default slice -}}
+{{- with $section }}{{ $list = where $list "section" . }}{{ end -}}
+
+{{- if not $list }}
+<p class="empty">No packages have been published yet. Add one with <code>fyshpkg add</code>.</p>
+{{- else }}
+<div class="table-scroll">
+  <table class="packages">
+    <thead>
+      <tr><th>Package</th><th>Version</th><th>Arch</th><th>Size</th><th>Download</th></tr>
+    </thead>
+    <tbody>
+      {{- range $list }}
+      <tr>
+        <th scope="row">
+          <span class="pkg-name">{{ .name }}</span>
+          {{- with .description }}<span class="pkg-desc">{{ . }}</span>{{ end }}
+        </th>
+        <td><code>{{ .version }}</code></td>
+        <td>{{ .architecture }}</td>
+        <td class="num">
+          {{- if lt .size 1048576.0 }}{{ div (float .size) 1024 | lang.FormatNumber 0 }} kB
+          {{- else }}{{ div (float .size) 1048576 | lang.FormatNumber 1 }} MB{{ end -}}
+        </td>
+        <td><a href="{{ .filename | relURL }}" download>.deb</a></td>
+      </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>
+<p class="muted">Indexed {{ dateFormat "2 January 2006, 15:04 UTC" $data.generated }}.</p>
+{{- end }}

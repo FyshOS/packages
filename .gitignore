@@ -1,0 +1,17 @@
+# Hugo build output
+/public/
+/resources/_gen/
+/.hugo_build.lock
+
+# Go
+/cmd/fyshpkg/fyshpkg
+/cmd/**/*.test
+
+# Local secrets — never commit a private signing key
+*.private.asc
+/secring.gpg
+.env
+
+# Editors / OS
+.DS_Store
+*.swp

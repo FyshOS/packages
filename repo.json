@@ -1,0 +1,12 @@
+{
+  "root": "repo",
+  "dataDir": "data",
+  "origin": "FyshOS",
+  "label": "FyshOS",
+  "description": "FyshOS package repository",
+  "suites": ["stable"],
+  "components": ["main"],
+  "architectures": ["amd64", "arm64"],
+  "signingKey": "",
+  "validDays": 30
+}
