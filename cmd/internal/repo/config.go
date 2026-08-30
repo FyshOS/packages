@@ -35,12 +35,40 @@ type Config struct {
 	// ValidDays sets Valid-Until on Release. Zero omits the field.
 	ValidDays int `json:"validDays"`
 
+	// Package holds the control-field defaults `fyshpkg package` applies when
+	// building a .deb from a Fyne application's source.
+	Package PackageDefaults `json:"package"`
+
 	dir string // absolute project root, not serialised
 }
 
-// Load finds repo.json by walking up from the working directory, so fyshpkg
-// works from anywhere inside the project.
+// PackageDefaults are the control fields that FyneApp.toml has nowhere to
+// record, so the archive decides them.
+type PackageDefaults struct {
+	// Maintainer is the RFC822 name and address of whoever is answerable for
+	// the packaging. Debian requires it, so packaging fails without one.
+	Maintainer string `json:"maintainer"`
+	Section    string `json:"section"`
+	Priority   string `json:"priority"`
+	// Depends is the runtime dependency list applied to every package built
+	// from source. The default covers what a Fyne application needs on a
+	// desktop system; override it per package with -depends.
+	Depends []string `json:"depends"`
+}
+
+// EnvRoot names the environment variable that points at the archive, for
+// working outside the project — building an application from its own source
+// tree, most of all.
+const EnvRoot = "FYSHPKG_REPO"
+
+// Load finds the archive. FYSHPKG_REPO wins when it is set; otherwise
+// repo.json is found by walking up from the working directory, so fyshpkg
+// works from anywhere inside the project itself.
 func Load() (*Config, error) {
+	if dir := os.Getenv(EnvRoot); dir != "" {
+		return LoadFrom(dir)
+	}
+
 	dir, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -52,10 +80,30 @@ func Load() (*Config, error) {
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return nil, fmt.Errorf("no %s found in this directory or any parent", ConfigName)
+			return nil, fmt.Errorf("no %s in this directory or any parent —\n"+
+				"  run fyshpkg from the archive, pass -repo, or set %s to the archive directory",
+				ConfigName, EnvRoot)
 		}
 		dir = parent
 	}
+}
+
+// LoadFrom reads the archive rooted at dir, which may also be the path of the
+// repo.json file itself.
+func LoadFrom(dir string) (*Config, error) {
+	abs, err := filepath.Abs(dir)
+	if err != nil {
+		return nil, err
+	}
+	if info, err := os.Stat(abs); err == nil && !info.IsDir() {
+		abs = filepath.Dir(abs)
+	}
+
+	name := filepath.Join(abs, ConfigName)
+	if _, err := os.Stat(name); err != nil {
+		return nil, fmt.Errorf("no %s in %s", ConfigName, abs)
+	}
+	return load(name, abs)
 }
 
 func load(name, dir string) (*Config, error) {
@@ -83,10 +131,32 @@ func load(name, dir string) (*Config, error) {
 	if len(c.Architectures) == 0 {
 		c.Architectures = []string{"amd64", "arm64"}
 	}
+	if c.Package.Section == "" {
+		c.Package.Section = "misc"
+	}
+	if c.Package.Priority == "" {
+		c.Package.Priority = "optional"
+	}
+	if len(c.Package.Depends) == 0 {
+		c.Package.Depends = DefaultDepends
+	}
 	if key := os.Getenv("FYSHPKG_SIGNING_KEY"); key != "" {
 		c.SigningKey = key
 	}
 	return c, nil
+}
+
+// DefaultDepends is the runtime library set a Fyne application links against
+// on a Linux desktop. It is used when repo.json names no dependencies.
+var DefaultDepends = []string{
+	"libc6",
+	"libgl1",
+	"libx11-6",
+	"libxcursor1",
+	"libxi6",
+	"libxinerama1",
+	"libxrandr2",
+	"libxxf86vm1",
 }
 
 // Dir is the absolute project root.

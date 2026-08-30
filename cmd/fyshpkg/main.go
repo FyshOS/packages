@@ -3,6 +3,7 @@
 // The archive lives in repo/ next to the Hugo site. Every command works on the
 // project containing repo.json, found by walking up from the working directory.
 //
+//	fyshpkg package ./myapp      build a .deb from Fyne source and add it
 //	fyshpkg add build/*.deb      copy packages into the pool and reindex
 //	fyshpkg rm fysh-desktop      drop a package from the pool and reindex
 //	fyshpkg index                rebuild dists/ from whatever is in the pool
@@ -19,6 +20,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"packages.fyshos.com/cmd/internal/build"
 	"packages.fyshos.com/cmd/internal/repo"
 )
 
@@ -31,6 +33,8 @@ func main() {
 	args := os.Args[2:]
 	var err error
 	switch os.Args[1] {
+	case "package", "pkg":
+		err = pkg(args)
 	case "add":
 		err = add(args)
 	case "rm", "remove":
@@ -60,6 +64,7 @@ func usage() {
 	fmt.Fprint(os.Stderr, `fyshpkg manages the FyshOS Debian archive in repo/.
 
 Usage:
+  fyshpkg package [flags] [source-dir]       build a Fyne app and add it
   fyshpkg add [-c component] <file.deb>...   add packages to the pool
   fyshpkg rm [-v version] [-a arch] <name>   remove packages from the pool
   fyshpkg index                              rebuild dists/ from the pool
@@ -67,9 +72,167 @@ Usage:
   fyshpkg check                              verify metadata against the pool
   fyshpkg key [-o dir] [-n name]             export the public signing key
 
-Configuration lives in repo.json. Set FYSHPKG_SIGNING_KEY to sign with a key
-other than the one recorded there.
+Run "fyshpkg package -h" for the packaging flags.
+
+Configuration lives in repo.json, found by walking up from the working
+directory. Set FYSHPKG_REPO to the archive directory to work from elsewhere —
+building an application from its own source tree, most of all.
+
+Set FYSHPKG_SIGNING_KEY to sign with a key other than the one in repo.json.
 `)
+}
+
+func pkg(args []string) error {
+	fs := flag.NewFlagSet("package", flag.ExitOnError)
+	component := fs.String("c", "main", "archive component to add the package to")
+	repoDir := fs.String("repo", "", "archive directory (default: $FYSHPKG_REPO, else found from the working directory)")
+	name := fs.String("name", "", "Debian package name (default: derived from the app name)")
+	version := fs.String("version", "", "Debian version (default: Version-Build from FyneApp.toml)")
+	arches := fs.String("arch", "", "comma-separated architectures to build (default: those in repo.json)")
+	section := fs.String("section", "", "archive section")
+	priority := fs.String("priority", "", "package priority")
+	maintainer := fs.String("maintainer", "", "maintainer name and address")
+	depends := fs.String("depends", "", "comma-separated runtime dependencies, replacing the repo.json defaults")
+	description := fs.String("description", "", "one-line description (default: Comment from FyneApp.toml)")
+	homepage := fs.String("homepage", "", "project URL (default: Website from FyneApp.toml)")
+	prefix := fs.String("prefix", "/usr", "install prefix inside the package")
+	tags := fs.String("tags", "", "comma-separated Go build tags")
+	release := fs.Bool("release", false, "build in release mode")
+	out := fs.String("o", "", "keep the built .deb in this directory")
+	noAdd := fs.Bool("no-add", false, "build the .deb but do not add it to the archive")
+	fs.Usage = func() {
+		fmt.Fprint(os.Stderr, `Usage: fyshpkg package [flags] [source-dir]
+
+Cross-builds the Fyne application in source-dir (default: the working
+directory) with fyne-cross, wraps each architecture as a .deb with dpkg-deb,
+and adds them all to the archive. Identity and version come from FyneApp.toml;
+the control fields Fyne has nowhere to record come from the package section of
+repo.json.
+
+The application usually lives outside the archive, so say where the archive is
+— export FYSHPKG_REPO once in your shell profile, or pass -repo:
+
+  export FYSHPKG_REPO=~/Code/FyshOS/packages.fyshos.com
+  cd ~/Code/FyshOS/notes && fyshpkg package
+
+  fyshpkg package -repo ~/Code/FyshOS/packages.fyshos.com
+
+Every architecture in a release shares one build number, which becomes the
+Debian revision, and FyneApp.toml is left holding the number that shipped.
+
+fyne-cross builds in containers, so Docker or Podman has to be running.
+
+Flags:
+`)
+		fs.PrintDefaults()
+	}
+	fs.Parse(args)
+	if fs.NArg() > 1 {
+		return fmt.Errorf("package takes at most one source directory")
+	}
+
+	c, err := loadRepo(*repoDir)
+	if err != nil {
+		return err
+	}
+
+	source := fs.Arg(0)
+	if source == "" {
+		source = "."
+	}
+
+	// With no -o the .deb is a means to an end, so it is built somewhere
+	// temporary and cleaned up once it is safely in the pool.
+	outputDir := *out
+	if outputDir == "" {
+		if *noAdd {
+			outputDir = "."
+		} else {
+			temp, err := os.MkdirTemp("", "fyshpkg-deb-")
+			if err != nil {
+				return err
+			}
+			defer os.RemoveAll(temp)
+			outputDir = temp
+		}
+	}
+
+	opts := build.Options{
+		SourceDir:   source,
+		OutputDir:   outputDir,
+		Arches:      c.BinaryArchitectures(),
+		Name:        *name,
+		Version:     *version,
+		Section:     firstSet(*section, c.Package.Section),
+		Priority:    firstSet(*priority, c.Package.Priority),
+		Maintainer:  firstSet(*maintainer, c.Package.Maintainer),
+		Depends:     c.Package.Depends,
+		Description: *description,
+		Homepage:    *homepage,
+		Prefix:      *prefix,
+		Release:     *release,
+		Tags:        *tags,
+		Log:         func(format string, args ...any) { fmt.Printf(format+"\n", args...) },
+	}
+	if *depends != "" {
+		opts.Depends = splitList(*depends)
+	}
+	if *arches != "" {
+		opts.Arches = splitList(*arches)
+	}
+
+	built, err := build.Package(opts)
+	if err != nil {
+		return err
+	}
+
+	for _, result := range built {
+		if *noAdd || *out != "" {
+			fmt.Println("wrote", result.Path)
+		}
+		if *noAdd {
+			continue
+		}
+		entry, err := c.Add(*component, result.Path)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("added %s %s (%s) -> %s\n", entry.Name, entry.Version, entry.Arch, entry.Filename)
+	}
+	if *noAdd {
+		return nil
+	}
+	return reindex(c)
+}
+
+// loadRepo opens the archive named by the flag, or lets repo.Load work it out
+// from FYSHPKG_REPO and the working directory.
+func loadRepo(dir string) (*repo.Config, error) {
+	if dir != "" {
+		return repo.LoadFrom(dir)
+	}
+	return repo.Load()
+}
+
+// firstSet returns the first non-empty value, so a flag beats repo.json.
+func firstSet(values ...string) string {
+	for _, v := range values {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
+// splitList parses a comma-separated flag value, ignoring blank entries.
+func splitList(value string) []string {
+	var out []string
+	for _, item := range strings.Split(value, ",") {
+		if item = strings.TrimSpace(item); item != "" {
+			out = append(out, item)
+		}
+	}
+	return out
 }
 
 func add(args []string) error {
