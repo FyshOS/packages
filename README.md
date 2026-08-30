@@ -48,9 +48,10 @@ fyshpkg package
 ```
 
 ```
-cross-building Fysh Notes 0.4.2 (build 21) for amd64, arm64
+cross-building Fysh Notes 0.4.2 (build 21) for amd64, arm64, i386
 packaged fysh-notes 0.4.2-21 (amd64) from 3 file(s)
 packaged fysh-notes 0.4.2-21 (arm64) from 3 file(s)
+packaged fysh-notes 0.4.2-21 (i386) from 3 file(s)
 ```
 
 All architectures in a release share one build number, so they land in the
@@ -150,8 +151,8 @@ pointers, not the file.
 
 ## Archive layout
 
-One suite (`stable`) and one component (`main`), built for `amd64` and `arm64`
-— `fyshpkg package` produces a `.deb` for each.
+One suite (`stable`) and one component (`main`), built for `amd64`, `arm64`
+and `i386` — `fyshpkg package` produces a `.deb` for each.
 All suites listed in `repo.json` index the whole pool, which is what you want
 for a single-suite archive; splitting packages across suites would need a
 membership file that `fyshpkg` does not yet keep.

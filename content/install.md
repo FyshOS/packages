@@ -81,8 +81,8 @@ matches where the key actually landed.
 with `timedatectl`; if the clock is right, the archive needs reindexing.
 
 **`404 Not Found` on a `Packages` file** — apt is asking for an architecture the
-archive does not publish. The archive carries `amd64` and `arm64`; pin one with
-`arch=` in the source definition.
+archive does not publish. The archive carries `amd64`, `arm64` and `i386`;
+pin one with `arch=` in the source definition.
 
 ## Browsing by hand
 

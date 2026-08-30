@@ -128,7 +128,7 @@ Flags:
 	}
 	fs.Parse(args)
 	if fs.NArg() > 1 {
-		return fmt.Errorf("package takes at most one source directory")
+		return fmt.Errorf("package takes at most one source directory%s", flagsAfterName(fs.Args()))
 	}
 
 	c, err := loadRepo(*repoDir)
@@ -205,6 +205,17 @@ Flags:
 	return reindex(c)
 }
 
+// flagsAfterName explains the most likely mistake: Go stops parsing flags at
+// the first plain argument, so anything after the name is read as an argument.
+func flagsAfterName(args []string) string {
+	for _, arg := range args {
+		if strings.HasPrefix(arg, "-") {
+			return " — flags must come before it, as in `-a arm64 <name>`"
+		}
+	}
+	return ""
+}
+
 // loadRepo opens the archive named by the flag, or lets repo.Load work it out
 // from FYSHPKG_REPO and the working directory.
 func loadRepo(dir string) (*repo.Config, error) {
@@ -263,7 +274,7 @@ func remove(args []string) error {
 	arch := fs.String("a", "", "only remove this architecture")
 	fs.Parse(args)
 	if fs.NArg() != 1 {
-		return fmt.Errorf("rm needs exactly one package name")
+		return fmt.Errorf("rm needs exactly one package name%s", flagsAfterName(fs.Args()))
 	}
 
 	c, err := repo.Load()

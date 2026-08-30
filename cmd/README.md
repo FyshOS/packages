@@ -68,17 +68,19 @@ fyshpkg package -repo ~/Code/FyshOS/packages.fyshos.com ~/Code/FyshOS/notes
 ```
 
 ```
-cross-building Fysh Notes 0.4.2 (build 21) for amd64, arm64
+cross-building Fysh Notes 0.4.2 (build 21) for amd64, arm64, i386
 packaged fysh-notes 0.4.2-21 (amd64) from 3 file(s)
 packaged fysh-notes 0.4.2-21 (arm64) from 3 file(s)
+packaged fysh-notes 0.4.2-21 (i386) from 3 file(s)
 added fysh-notes 0.4.2-21 (amd64) -> pool/main/f/fysh-notes/fysh-notes_0.4.2-21_amd64.deb
 added fysh-notes 0.4.2-21 (arm64) -> pool/main/f/fysh-notes/fysh-notes_0.4.2-21_arm64.deb
-indexed 2 package(s) across stable, signed with …
+added fysh-notes 0.4.2-21 (i386) -> pool/main/f/fysh-notes/fysh-notes_0.4.2-21_i386.deb
+indexed 3 package(s) across stable, signed with …
 ```
 
 It leans on the tools that already know how to do each job:
 
-1. **`fyne-cross linux --arch amd64,arm64`** compiles each architecture in its
+1. **`fyne-cross linux --arch amd64,arm64,386`** compiles each architecture in its
    own container and lays out the binary, `.desktop` entry and icon. Use
    `-release` for a release build and `-tags` for build tags.
 2. Each bundle is restaged under `/usr`. Fyne installs below `/usr/local`,

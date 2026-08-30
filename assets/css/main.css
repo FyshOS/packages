@@ -199,6 +199,23 @@ pre:hover .copy, .copy:focus-visible { opacity: 1; }
 .pkg-name { display: block; font-weight: 650; }
 .pkg-desc { display: block; font-weight: 400; color: var(--muted); font-size: .85rem; }
 
+/* One list item per architecture, each on its own line so a package with
+   several builds still reads as a single row. */
+.arches { list-style: none; margin: 0; padding: 0; }
+.arches li { display: flex; align-items: baseline; gap: .4rem; white-space: nowrap; }
+.arches li + li { margin-top: .25rem; }
+.arches a { font-family: var(--mono); font-size: .88em; }
+.arch-size { color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; }
+
+.arch-lag {
+  color: var(--muted);
+  font-size: .75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 .3em;
+  cursor: help;
+}
+
 /* Footer ------------------------------------------------------------------ */
 
 .site-footer {

@@ -34,7 +34,8 @@ sudo apt install fysh-desktop
 ## What is in here
 
 The archive publishes the `stable` suite with a single `main` component, built
-for `amd64` and `arm64`. Packages marked `Architecture: all` are available on
+for `amd64`, `arm64` and `i386`. Packages marked `Architecture: all` are
+available on
 every architecture.
 
 See the [package list](/packages/) for everything currently published.

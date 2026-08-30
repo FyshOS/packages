@@ -6,7 +6,22 @@
   "description": "FyshOS package repository",
   "suites": ["stable"],
   "components": ["main"],
-  "architectures": ["amd64", "arm64"],
+  "architectures": ["amd64", "arm64", "i386"],
   "signingKey": "",
-  "validDays": 30
+  "validDays": 30,
+  "package": {
+    "maintainer": "Andy Williams <andy@fyne.io>",
+    "section": "misc",
+    "priority": "optional",
+    "depends": [
+      "libc6",
+      "libgl1",
+      "libx11-6",
+      "libxcursor1",
+      "libxi6",
+      "libxinerama1",
+      "libxrandr2",
+      "libxxf86vm1"
+    ]
+  }
 }

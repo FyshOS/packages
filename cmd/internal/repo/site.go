@@ -10,20 +10,30 @@ import (
 	"time"
 )
 
-// SitePackage is one row of the package table on the website.
+// SiteDownload is one architecture's build of a package.
+type SiteDownload struct {
+	Architecture string `json:"architecture"`
+	// Version is repeated here because an architecture can lag behind, when a
+	// build for it failed or was never made.
+	Version  string `json:"version"`
+	Filename string `json:"filename"`
+	Size     int64  `json:"size"`
+	SHA256   string `json:"sha256"`
+}
+
+// SitePackage is one row of the package table on the website: a package with
+// every architecture it is available for.
 type SitePackage struct {
-	Name          string `json:"name"`
-	Version       string `json:"version"`
-	Architecture  string `json:"architecture"`
-	Component     string `json:"component"`
-	Section       string `json:"section,omitempty"`
-	Description   string `json:"description,omitempty"`
-	Homepage      string `json:"homepage,omitempty"`
-	Maintainer    string `json:"maintainer,omitempty"`
-	Filename      string `json:"filename"`
-	Size          int64  `json:"size"`
-	InstalledSize int64  `json:"installedSize,omitempty"`
-	SHA256        string `json:"sha256"`
+	Name string `json:"name"`
+	// Version is the newest across the architectures below.
+	Version       string         `json:"version"`
+	Component     string         `json:"component"`
+	Section       string         `json:"section,omitempty"`
+	Description   string         `json:"description,omitempty"`
+	Homepage      string         `json:"homepage,omitempty"`
+	Maintainer    string         `json:"maintainer,omitempty"`
+	InstalledSize int64          `json:"installedSize,omitempty"`
+	Downloads     []SiteDownload `json:"downloads"`
 }
 
 // SiteData is the shape of data/packages.json.
@@ -33,9 +43,11 @@ type SiteData struct {
 	Packages  []SitePackage `json:"packages"`
 }
 
-// writeSiteData refreshes the JSON the Hugo site reads. Only the newest
-// version of each name and architecture is listed; the archive itself still
-// carries every version that is in the pool.
+// writeSiteData refreshes the JSON the Hugo site reads. Packages are grouped
+// by name, one entry per package with a download for each architecture, so the
+// website can show a single row however many architectures are published.
+// Only the newest version of each name and architecture is listed; the archive
+// itself still carries every version that is in the pool.
 func (c *Config) writeSiteData(entries []*Entry) error {
 	newest := map[string]*Entry{}
 	for _, e := range entries {
@@ -45,30 +57,44 @@ func (c *Config) writeSiteData(entries []*Entry) error {
 		}
 	}
 
-	data := SiteData{Generated: time.Now().UTC(), Suites: c.Suites, Packages: []SitePackage{}}
+	packages := map[string]*SitePackage{}
 	for _, e := range newest {
-		installed, _ := strconv.ParseInt(e.Get("Installed-Size"), 10, 64)
-		data.Packages = append(data.Packages, SitePackage{
-			Name:          e.Name,
-			Version:       e.Version,
-			Architecture:  e.Arch,
-			Component:     e.Component,
-			Section:       e.Get("Section"),
-			Description:   e.ShortDescription(),
-			Homepage:      e.Get("Homepage"),
-			Maintainer:    e.Get("Maintainer"),
-			Filename:      e.Filename,
-			Size:          e.Size,
-			InstalledSize: installed * 1024,
-			SHA256:        e.SHA256,
+		pkg, ok := packages[e.Name]
+		if !ok {
+			pkg = &SitePackage{Name: e.Name}
+			packages[e.Name] = pkg
+		}
+		pkg.Downloads = append(pkg.Downloads, SiteDownload{
+			Architecture: e.Arch,
+			Version:      e.Version,
+			Filename:     e.Filename,
+			Size:         e.Size,
+			SHA256:       e.SHA256,
 		})
+
+		// Describe the package from its newest build, so a lagging
+		// architecture cannot pin the listing to a stale description.
+		if pkg.Version == "" || CompareVersions(e.Version, pkg.Version) > 0 {
+			installed, _ := strconv.ParseInt(e.Get("Installed-Size"), 10, 64)
+			pkg.Version = e.Version
+			pkg.Component = e.Component
+			pkg.Section = e.Get("Section")
+			pkg.Description = e.ShortDescription()
+			pkg.Homepage = e.Get("Homepage")
+			pkg.Maintainer = e.Get("Maintainer")
+			pkg.InstalledSize = installed * 1024
+		}
+	}
+
+	data := SiteData{Generated: time.Now().UTC(), Suites: c.Suites, Packages: []SitePackage{}}
+	for _, pkg := range packages {
+		sort.Slice(pkg.Downloads, func(i, j int) bool {
+			return pkg.Downloads[i].Architecture < pkg.Downloads[j].Architecture
+		})
+		data.Packages = append(data.Packages, *pkg)
 	}
 	sort.Slice(data.Packages, func(i, j int) bool {
-		a, b := data.Packages[i], data.Packages[j]
-		if a.Name != b.Name {
-			return a.Name < b.Name
-		}
-		return a.Architecture < b.Architecture
+		return data.Packages[i].Name < data.Packages[j].Name
 	})
 
 	raw, err := json.MarshalIndent(data, "", "  ")
