@@ -8,9 +8,9 @@ lead: The official Debian archive for FyshOS. Add it to apt and install FyshOS c
 On Debian 12 or newer and Ubuntu 24.04 or newer:
 
 ```sh
-sudo install -m 0755 -d /usr/share/keyrings
 sudo curl -fsSL https://packages.fyshos.com/fyshos-archive-keyring.gpg \
   -o /usr/share/keyrings/fyshos-archive-keyring.gpg
+sudo chmod 0644 /usr/share/keyrings/fyshos-archive-keyring.gpg
 
 sudo tee /etc/apt/sources.list.d/fyshos.sources > /dev/null <<'SOURCES'
 Types: deb
@@ -26,7 +26,7 @@ sudo apt update
 Then install what you need, for example:
 
 ```sh
-sudo apt install fysh-desktop
+sudo apt install fyneterm
 ```
 
 [Full instructions, including older releases →](/install/)
