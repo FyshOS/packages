@@ -75,18 +75,9 @@ func Package(opts Options) ([]*Result, error) {
 	// The build runs from the project root even when only one package inside it
 	// is wanted, so imports of the project's own packages and any assets
 	// referenced from outside the command directory still resolve.
-	root, pkg, err := splitPackage(opts.SourceDir)
+	root, pkg, metaDir, err := projectPaths(opts.SourceDir)
 	if err != nil {
 		return nil, err
-	}
-
-	// FyneApp.toml usually sits at the root, but a project whose command lives
-	// in a subdirectory may keep it there instead.
-	metaDir := root
-	if pkg != "." {
-		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(pkg), MetadataName)); err == nil {
-			metaDir = filepath.Join(root, filepath.FromSlash(pkg))
-		}
 	}
 	app, err := LoadMetadata(metaDir)
 	if err != nil {
@@ -165,6 +156,27 @@ func Package(opts Options) ([]*Result, error) {
 		})
 	}
 	return results, nil
+}
+
+// projectPaths resolves an argument into the project root, the package inside
+// it, and the directory holding FyneApp.toml.
+//
+// FyneApp.toml usually sits at the root, but a project whose command lives in a
+// subdirectory often keeps it beside that command instead.
+func projectPaths(arg string) (root, pkg, metaDir string, err error) {
+	root, pkg, err = splitPackage(arg)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	metaDir = root
+	if pkg != "." {
+		beside := filepath.Join(root, filepath.FromSlash(pkg))
+		if _, err := os.Stat(filepath.Join(beside, MetadataName)); err == nil {
+			metaDir = beside
+		}
+	}
+	return root, pkg, metaDir, nil
 }
 
 // splitPackage separates the project root from the package to build.

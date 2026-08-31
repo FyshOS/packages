@@ -211,3 +211,40 @@ func TestIconPath(t *testing.T) {
 		t.Errorf("iconPath with no icon = %q, want empty", got)
 	}
 }
+
+func TestProjectPaths(t *testing.T) {
+	dir := t.TempDir()
+	cmdDir := filepath.Join(dir, "cmd", "fyshsaver")
+	if err := os.MkdirAll(cmdDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	restore, _ := os.Getwd()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chdir(restore)
+
+	// With no FyneApp.toml beside the command, the root is where it would be.
+	_, pkg, metaDir, err := projectPaths("cmd/fyshsaver")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if pkg != "./cmd/fyshsaver" {
+		t.Errorf("package = %q, want ./cmd/fyshsaver", pkg)
+	}
+	if filepath.Base(metaDir) == "fyshsaver" {
+		t.Error("metadata should fall back to the root when the command has no FyneApp.toml")
+	}
+
+	// Once the command carries one, that is where the metadata comes from.
+	if err := os.WriteFile(filepath.Join(cmdDir, MetadataName), []byte("[Details]\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, metaDir, err = projectPaths("cmd/fyshsaver"); err != nil {
+		t.Fatal(err)
+	}
+	if filepath.Base(metaDir) != "fyshsaver" {
+		t.Errorf("metadata dir = %q, want the command directory", metaDir)
+	}
+}

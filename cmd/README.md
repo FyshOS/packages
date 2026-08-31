@@ -196,6 +196,24 @@ rather than a hopeful `libc6`) and there is no hand-written list to drift.
 `-build-deps` is the one list the makefile does have to carry: the packages
 the build itself needs. It sits next to the target it belongs to.
 
+A subdirectory argument names where the command lives, exactly as it does for
+`fyshpkg package`. Saver keeps its `FyneApp.toml` beside its command, so:
+
+```sh
+fyshpkg make cmd/fyshsaver
+```
+
+builds the whole project with its makefile as usual, and reads the version and
+build number from `cmd/fyshsaver/FyneApp.toml`.
+
+### Which command to use
+
+`fyshpkg package` is the shorter route for a self-contained Fyne application,
+but it builds inside the fyne-cross image, which is fixed. A project needing a
+library that image does not carry has to use `fyshpkg make` instead, where
+`-build-deps` can install it: Saver links against PAM, whose headers fyne-cross
+does not ship, so it is packaged from its own makefile alongside Tyde and Fin.
+
 Versions come from the same place a single Fyne application's do, so
 everything in the archive reads alike:
 

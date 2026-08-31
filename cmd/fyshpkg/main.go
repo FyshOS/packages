@@ -263,7 +263,7 @@ func makeProject(args []string) error {
 	component := fs.String("c", "main", "archive component to add the package to")
 	repoDir := fs.String("repo", "", "archive directory (default: $FYSHPKG_REPO, else found from the working directory)")
 	name := fs.String("name", "", "Debian package name (default: the source directory name)")
-	version := fs.String("version", "", "Debian version (default: derived from git describe)")
+	version := fs.String("version", "", "Debian version (default: from FyneApp.toml, else git describe)")
 	arches := fs.String("arch", "", "comma-separated architectures to build (default: those in repo.json)")
 	section := fs.String("section", "", "archive section")
 	priority := fs.String("priority", "", "package priority")

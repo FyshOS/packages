@@ -22,7 +22,7 @@ type ProjectOptions struct {
 	Arches []string // Debian architectures to build
 
 	Name        string
-	Version     string // default: derived from git describe
+	Version     string // default: from FyneApp.toml, else git describe
 	Section     string
 	Priority    string
 	Maintainer  string
@@ -145,7 +145,10 @@ func Project(opts ProjectOptions) ([]*Result, error) {
 		logf = func(string, ...any) {}
 	}
 
-	source, err := filepath.Abs(opts.SourceDir)
+	// A subdirectory argument names where the command lives, exactly as it does
+	// for a single Fyne application: the whole project is still built by its
+	// makefile, and the metadata is read from beside the command.
+	source, _, metaDir, err := projectPaths(opts.SourceDir)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +159,7 @@ func Project(opts ProjectOptions) ([]*Result, error) {
 		return nil, fmt.Errorf("podman is not installed: apt install podman")
 	}
 
-	spec, number, err := resolveProject(source, opts)
+	spec, number, err := resolveProject(source, metaDir, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +234,7 @@ func Project(opts ProjectOptions) ([]*Result, error) {
 	// Record the build number only once every architecture is packaged, so a
 	// release that fell over halfway does not consume one.
 	if number > 0 {
-		if err := setBuildNumber(source, number); err != nil {
+		if err := setBuildNumber(metaDir, number); err != nil {
 			logf("could not record build %d in %s: %v", number, MetadataName, err)
 		}
 	}
@@ -240,7 +243,7 @@ func Project(opts ProjectOptions) ([]*Result, error) {
 
 // resolveProject fills in the control fields, and returns the build number to
 // record afterwards, or zero when the version did not come from FyneApp.toml.
-func resolveProject(source string, opts ProjectOptions) (*spec, int, error) {
+func resolveProject(source, metaDir string, opts ProjectOptions) (*spec, int, error) {
 	s := &spec{
 		Name:        opts.Name,
 		Version:     opts.Version,
@@ -261,7 +264,7 @@ func resolveProject(source string, opts ProjectOptions) (*spec, int, error) {
 	// Fyne application is, so everything in the archive reads alike. Only a
 	// project without one falls back to its position in git history.
 	number := 0
-	app, appErr := LoadMetadata(source)
+	app, appErr := LoadMetadata(metaDir)
 	if appErr == nil && app.Details.Version != "" {
 		number = app.Details.Build + 1
 		if s.Version == "" {
