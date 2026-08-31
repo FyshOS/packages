@@ -29,6 +29,7 @@ from inside the archive; set `FYSHPKG_REPO` for everything else.
 | Command | What it does |
 | --- | --- |
 | `fyshpkg package [flags] [dir]` | Cross-builds a Fyne application into one `.deb` per architecture and adds them |
+| `fyshpkg make [flags] [dir]` | Builds a makefile project the same way, using its own install target |
 | `fyshpkg add [-c main] <file.deb>...` | Copies packages into `repo/pool/` and reindexes |
 | `fyshpkg rm [-v version] [-a arch] <name>` | Deletes matching packages from the pool and reindexes |
 | `fyshpkg index` | Rebuilds `repo/dists/` from whatever is in the pool |
@@ -150,6 +151,79 @@ inside the application source — worth adding to that project's `.gitignore`.
 Everything else — parsing the `.deb`, indexing, signing — is handled by
 `fyshpkg` itself.
 
+## Building a makefile project
+
+`fyshpkg package` suits a single Fyne application: one binary, one desktop
+entry, one icon, all described by `FyneApp.toml`. Tyde and Fin are not that
+shape. Tyde builds three binaries and ships a session file, two launcher
+entries and an icon; Fin ships a systemd unit beside its binary. Both already
+describe exactly that in their makefiles, so `fyshpkg make` uses the makefile
+as the manifest instead of inventing a second one:
+
+```sh
+cd ~/Code/FyshOS/tyde
+make repo
+```
+
+Whatever the install target stages under `DESTDIR` becomes the package
+payload. Add a file to `make install` and it is in the next `.deb`, with
+nothing to keep in step here.
+
+### How a build runs
+
+Each architecture is built inside a container **of that architecture**, using
+podman's `--arch`, so nothing is cross-compiled: cgo, `pkg-config` and the
+system headers all behave as they would on that machine. That matters for
+Tyde and Fin, which link against X11, wayland and PAM.
+
+The base image matches what the ISO is built from — `debian:trixie` for amd64
+and arm64, `debian:bookworm` for i386, since Trixie dropped i386. Bookworm's Go
+is too old for current Fyne, so `golang-go` comes from `bookworm-backports`
+there; the 64bit images use the packaged Go. Module and build caches are kept
+per architecture under `~/.cache/fyshpkg`, so a second build is much quicker
+than the first.
+
+The build works on a copy of the checkout, never the checkout itself — a
+foreign architecture's object files have no business in your working tree.
+
+### Dependencies and versions
+
+Runtime dependencies are read off the built binaries with `dpkg-shlibdeps`
+inside the container, so they are accurate and versioned (`libc6 (>= 2.38)`
+rather than a hopeful `libc6`) and there is no hand-written list to drift.
+`-depends` is only a fallback for when that finds nothing.
+
+`-build-deps` is the one list the makefile does have to carry: the packages
+the build itself needs. It sits next to the target it belongs to.
+
+Versions come from the same place a single Fyne application's do, so
+everything in the archive reads alike:
+
+| Where the version comes from | Example |
+| --- | --- |
+| `FyneApp.toml`, as `Version` and `Build` | `0.1.0-5` |
+| `git describe`, when there is no `FyneApp.toml` | `0.4.0+393.g5f1194d5-1` |
+| `-version`, which overrides both | whatever you pass |
+
+With a `FyneApp.toml` the build number is incremented and written back, once
+every architecture has been packaged — a release that fell over halfway does
+not consume one. `Description` and `Homepage` fall back to its `Comment` and
+`Website` too, so a project that has one need pass fewer flags.
+
+Without one the version is the repository's position in history: `0.4.0-1` on
+tag `v0.4.0`, and `0.4.0+393.g5f1194d5-1` past it. The `+` form sorts after the
+tagged release and before the next one, so a development build never masks a
+later tag. Add a `FyneApp.toml` to move a project onto the first scheme.
+
+### Requirements
+
+`make` needs podman and `dpkg-deb`, and the project needs a makefile whose
+install target honours `DESTDIR` and `PREFIX`:
+
+```sh
+sudo apt install podman dpkg
+```
+
 ## Adding your own scripts
 
 Anything else that helps manage the archive belongs here: build wrappers,
@@ -162,5 +236,6 @@ The Go packages behind `fyshpkg`:
   gzip/xz/zstd variants, and the control stanza.
 - `internal/repo` — the archive: pool layout, index generation, signing,
   integrity checks and the website's data file.
-- `internal/build` — `FyneApp.toml`, and the fyne-cross-to-dpkg build
-  pipeline.
+- `internal/build` — `FyneApp.toml`, the fyne-cross-to-dpkg pipeline for
+  single applications, and the container-and-makefile pipeline for projects
+  that install themselves.

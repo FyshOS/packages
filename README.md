@@ -58,6 +58,16 @@ All architectures in a release share one build number, so they land in the
 archive as one version. It needs `fyne-cross` and a container engine —
 see [cmd/README.md](cmd/README.md).
 
+Projects that install themselves with a makefile — Tyde and Fin, which ship
+session files, launcher entries and a systemd unit alongside their binaries —
+use `fyshpkg make` instead, which takes the makefile's install target as the
+manifest. Both repositories have a `repo` target that wraps it:
+
+```sh
+cd ~/Code/FyshOS/tyde
+make repo
+```
+
 Or publish a `.deb` you already have:
 
 ```sh

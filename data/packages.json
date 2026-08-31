@@ -1,9 +1,42 @@
 {
-  "generated": "2026-08-30T20:17:51.640194216Z",
+  "generated": "2026-08-31T10:08:54.950904301Z",
   "suites": [
     "stable"
   ],
   "packages": [
+    {
+      "name": "fin",
+      "version": "0.1.0-5",
+      "component": "main",
+      "section": "x11",
+      "description": "FyshOS login manager",
+      "homepage": "https://fyshos.com",
+      "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
+      "installedSize": 36395008,
+      "downloads": [
+        {
+          "architecture": "amd64",
+          "version": "0.1.0-5",
+          "filename": "pool/main/f/fin/fin_0.1.0-5_amd64.deb",
+          "size": 19306896,
+          "sha256": "62e0a44bd2215955584f51bc8de4cc48ca6877afd54dd860cac6fd6fb6f2c76f"
+        },
+        {
+          "architecture": "arm64",
+          "version": "0.1.0-5",
+          "filename": "pool/main/f/fin/fin_0.1.0-5_arm64.deb",
+          "size": 17758744,
+          "sha256": "e564af260373af4ca5b903df57e321abb4baf30346d045c8196196ca12a67813"
+        },
+        {
+          "architecture": "i386",
+          "version": "0.1.0-5",
+          "filename": "pool/main/f/fin/fin_0.1.0-5_i386.deb",
+          "size": 18346912,
+          "sha256": "e6a0355273e06a3854e4e6d5f35bf365b61550c0abb82717c9013ecbf78b54e7"
+        }
+      ]
+    },
     {
       "name": "fyne-applications",
       "version": "0.3.0-5",
@@ -12,7 +45,7 @@
       "description": "Fyne Applications",
       "homepage": "https://apps.fyne.io",
       "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
-      "installedSize": 26493952,
+      "installedSize": 27301888,
       "downloads": [
         {
           "architecture": "amd64",
@@ -34,6 +67,39 @@
           "filename": "pool/main/f/fyne-applications/fyne-applications_0.3.0-5_i386.deb",
           "size": 10578076,
           "sha256": "020627f7763a57c26f7a0c817efc3785b8617c8daff9939668b5b028d5a1381b"
+        }
+      ]
+    },
+    {
+      "name": "tyde",
+      "version": "0.4.99-5",
+      "component": "main",
+      "section": "x11",
+      "description": "FyshOS desktop environment",
+      "homepage": "https://fyshos.com",
+      "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
+      "installedSize": 75873280,
+      "downloads": [
+        {
+          "architecture": "amd64",
+          "version": "0.4.99-5",
+          "filename": "pool/main/t/tyde/tyde_0.4.99-5_amd64.deb",
+          "size": 38430084,
+          "sha256": "91518565ed11d1b7f3d7466feedaa259fdb194dec2972f24e616fdf4da9aba31"
+        },
+        {
+          "architecture": "arm64",
+          "version": "0.4.99-5",
+          "filename": "pool/main/t/tyde/tyde_0.4.99-5_arm64.deb",
+          "size": 35580652,
+          "sha256": "d8232deab3fbea9ba931b21ed5f7aadd371fad164335413ece1176902d5a0133"
+        },
+        {
+          "architecture": "i386",
+          "version": "0.4.99-5",
+          "filename": "pool/main/t/tyde/tyde_0.4.99-5_i386.deb",
+          "size": 37135624,
+          "sha256": "b2f732d9977ea319f7a1caec11dffb098367e6fb9bf337644047b8bf0d1c3a67"
         }
       ]
     }

@@ -1,3 +1,19 @@
+Package: fin
+Version: 0.1.0-5
+Architecture: arm64
+Maintainer: Andy Williams <andy@fyne.io>
+Installed-Size: 33244
+Depends: libc6 (>= 2.38), libgl1, libpam0g (>= 0.99.7.1), libwayland-client0 (>= 1.20.0)
+Section: x11
+Priority: optional
+Homepage: https://fyshos.com
+Description: FyshOS login manager
+Filename: pool/main/f/fin/fin_0.1.0-5_arm64.deb
+Size: 17758744
+MD5sum: 4657afc8ac7b5b9cb87bff406fd70e87
+SHA1: d6b66a647e3b7c7bfeb7e76705c7d64221e11523
+SHA256: e564af260373af4ca5b903df57e321abb4baf30346d045c8196196ca12a67813
+
 Package: fyne-applications
 Version: 0.3.0-5
 Architecture: arm64
@@ -13,4 +29,20 @@ Size: 10029768
 MD5sum: 50a2d9c401fd9f96491571572d581eee
 SHA1: 5b3b1c694022e3938de9acda0582a590ec9d876b
 SHA256: 2563eb9053fe6a84aaf309a0226c00fc8839116f9f7ce069f6bb59734690a6d0
+
+Package: tyde
+Version: 0.4.99-5
+Architecture: arm64
+Maintainer: Andy Williams <andy@fyne.io>
+Installed-Size: 70386
+Depends: libc6 (>= 2.38), libgl1, libpam0g (>= 0.99.7.1), libwayland-client0 (>= 1.20.0)
+Section: x11
+Priority: optional
+Homepage: https://fyshos.com
+Description: FyshOS desktop environment
+Filename: pool/main/t/tyde/tyde_0.4.99-5_arm64.deb
+Size: 35580652
+MD5sum: 6b542788387c22d3e8317ea7912fefec
+SHA1: 8e11620e6dd94515ffffe6d6d1b47099b2b214c2
+SHA256: d8232deab3fbea9ba931b21ed5f7aadd371fad164335413ece1176902d5a0133
 

@@ -4,6 +4,7 @@
 // project containing repo.json, found by walking up from the working directory.
 //
 //	fyshpkg package ./myapp      build a .deb from Fyne source and add it
+//	fyshpkg make ./tyde          build a .deb from a makefile project and add it
 //	fyshpkg add build/*.deb      copy packages into the pool and reindex
 //	fyshpkg rm fysh-desktop      drop a package from the pool and reindex
 //	fyshpkg index                rebuild dists/ from whatever is in the pool
@@ -35,6 +36,8 @@ func main() {
 	switch os.Args[1] {
 	case "package", "pkg":
 		err = pkg(args)
+	case "make":
+		err = makeProject(args)
 	case "add":
 		err = add(args)
 	case "rm", "remove":
@@ -65,6 +68,7 @@ func usage() {
 
 Usage:
   fyshpkg package [flags] [source-dir]       build a Fyne app and add it
+  fyshpkg make [flags] [source-dir]          build a makefile project and add it
   fyshpkg add [-c component] <file.deb>...   add packages to the pool
   fyshpkg rm [-v version] [-a arch] <name>   remove packages from the pool
   fyshpkg index                              rebuild dists/ from the pool
@@ -72,7 +76,7 @@ Usage:
   fyshpkg check                              verify metadata against the pool
   fyshpkg key [-o dir] [-n name]             export the public signing key
 
-Run "fyshpkg package -h" for the packaging flags.
+Run "fyshpkg package -h" or "fyshpkg make -h" for the packaging flags.
 
 Configuration lives in repo.json, found by walking up from the working
 directory. Set FYSHPKG_REPO to the archive directory to work from elsewhere —
@@ -185,21 +189,26 @@ Flags:
 	if err != nil {
 		return err
 	}
+	return publish(c, *component, built, *noAdd, *out != "")
+}
 
+// publish reports each built package and, unless the caller only wanted the
+// files, adds them all to the pool before a single reindex.
+func publish(c *repo.Config, component string, built []*build.Result, noAdd, kept bool) error {
 	for _, result := range built {
-		if *noAdd || *out != "" {
+		if noAdd || kept {
 			fmt.Println("wrote", result.Path)
 		}
-		if *noAdd {
+		if noAdd {
 			continue
 		}
-		entry, err := c.Add(*component, result.Path)
+		entry, err := c.Add(component, result.Path)
 		if err != nil {
 			return err
 		}
 		fmt.Printf("added %s %s (%s) -> %s\n", entry.Name, entry.Version, entry.Arch, entry.Filename)
 	}
-	if *noAdd {
+	if noAdd {
 		return nil
 	}
 	return reindex(c)
@@ -235,15 +244,126 @@ func firstSet(values ...string) string {
 	return ""
 }
 
-// splitList parses a comma-separated flag value, ignoring blank entries.
+// splitList parses a flag value separated by commas or whitespace, so a long
+// package list can be written either way in a makefile.
 func splitList(value string) []string {
 	var out []string
-	for _, item := range strings.Split(value, ",") {
+	for _, item := range strings.FieldsFunc(value, func(r rune) bool {
+		return r == ',' || r == ' ' || r == '\t' || r == '\n'
+	}) {
 		if item = strings.TrimSpace(item); item != "" {
 			out = append(out, item)
 		}
 	}
 	return out
+}
+
+func makeProject(args []string) error {
+	fs := flag.NewFlagSet("make", flag.ExitOnError)
+	component := fs.String("c", "main", "archive component to add the package to")
+	repoDir := fs.String("repo", "", "archive directory (default: $FYSHPKG_REPO, else found from the working directory)")
+	name := fs.String("name", "", "Debian package name (default: the source directory name)")
+	version := fs.String("version", "", "Debian version (default: derived from git describe)")
+	arches := fs.String("arch", "", "comma-separated architectures to build (default: those in repo.json)")
+	section := fs.String("section", "", "archive section")
+	priority := fs.String("priority", "", "package priority")
+	maintainer := fs.String("maintainer", "", "maintainer name and address")
+	depends := fs.String("depends", "", "runtime dependencies, used only if they cannot be read from the binaries")
+	buildDeps := fs.String("build-deps", "", "space or comma separated Debian packages the build needs")
+	description := fs.String("description", "", "one-line description")
+	homepage := fs.String("homepage", "", "project URL")
+	prefix := fs.String("prefix", "/usr", "install prefix passed to the install target")
+	targets := fs.String("targets", "build", "make targets that build the project")
+	installTarget := fs.String("install-target", "install", "make target that stages the files")
+	image := fs.String("image", "", "override the base image used for every architecture")
+	sudo := fs.Bool("sudo", false, "permit a rootful container for an architecture that cannot build rootless")
+	out := fs.String("o", "", "keep the built .deb files in this directory")
+	noAdd := fs.Bool("no-add", false, "build the .deb files but do not add them to the archive")
+	fs.Usage = func() {
+		fmt.Fprint(os.Stderr, `Usage: fyshpkg make [flags] [source-dir]
+
+Builds a project that installs itself with a makefile, once per architecture,
+and adds the results to the archive. Each build runs in a container of the
+target architecture, so cgo, pkg-config and the system headers behave as they
+would on that machine and nothing is cross-compiled.
+
+The install target is the manifest: whatever it places under DESTDIR becomes
+the package, so binaries, desktop entries, session files and systemd units are
+picked up without being listed a second time. Runtime dependencies are read
+back off the built binaries with dpkg-shlibdeps.
+
+Building for another architecture needs an emulator (qemu-user-static). Where
+binfmt handlers do not reach a user namespace, that architecture also needs
+-sudo, which permits a rootful container for it alone: every architecture that
+can build rootless still does, only the podman command is elevated, and the
+files it produces are handed back to you.
+
+Say where the archive is with FYSHPKG_REPO or -repo.
+
+Flags:
+`)
+		fs.PrintDefaults()
+	}
+	fs.Parse(args)
+	if fs.NArg() > 1 {
+		return fmt.Errorf("make takes at most one source directory%s", flagsAfterName(fs.Args()))
+	}
+
+	c, err := loadRepo(*repoDir)
+	if err != nil {
+		return err
+	}
+
+	source := fs.Arg(0)
+	if source == "" {
+		source = "."
+	}
+
+	outputDir := *out
+	if outputDir == "" {
+		if *noAdd {
+			outputDir = "."
+		} else {
+			temp, err := os.MkdirTemp("", "fyshpkg-deb-")
+			if err != nil {
+				return err
+			}
+			defer os.RemoveAll(temp)
+			outputDir = temp
+		}
+	}
+
+	opts := build.ProjectOptions{
+		SourceDir:     source,
+		OutputDir:     outputDir,
+		Arches:        c.BinaryArchitectures(),
+		Name:          *name,
+		Version:       *version,
+		Section:       firstSet(*section, c.Package.Section),
+		Priority:      firstSet(*priority, c.Package.Priority),
+		Maintainer:    firstSet(*maintainer, c.Package.Maintainer),
+		Description:   *description,
+		Homepage:      *homepage,
+		Prefix:        *prefix,
+		BuildDepends:  splitList(*buildDeps),
+		MakeTargets:   splitList(*targets),
+		InstallTarget: *installTarget,
+		Image:         *image,
+		AllowSudo:     *sudo,
+		Log:           func(format string, args ...any) { fmt.Printf(format+"\n", args...) },
+	}
+	if *depends != "" {
+		opts.Depends = splitList(*depends)
+	}
+	if *arches != "" {
+		opts.Arches = splitList(*arches)
+	}
+
+	built, err := build.Project(opts)
+	if err != nil {
+		return err
+	}
+	return publish(c, *component, built, *noAdd, *out != "")
 }
 
 func add(args []string) error {
