@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-31T11:11:27.203802754Z",
+  "generated": "2026-08-31T19:58:20.683502146Z",
   "suites": [
     "stable"
   ],
@@ -45,7 +45,7 @@
       "description": "Fyne Applications",
       "homepage": "https://apps.fyne.io",
       "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
-      "installedSize": 26493952,
+      "installedSize": 28489728,
       "downloads": [
         {
           "architecture": "amd64",
@@ -103,6 +103,39 @@
       ]
     },
     {
+      "name": "fyshsaver",
+      "version": "0.1.0-12",
+      "component": "main",
+      "section": "x11",
+      "description": "FyshOS screen saver and locker",
+      "homepage": "https://fyshos.com",
+      "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
+      "installedSize": 33229824,
+      "downloads": [
+        {
+          "architecture": "amd64",
+          "version": "0.1.0-12",
+          "filename": "pool/main/f/fyshsaver/fyshsaver_0.1.0-12_amd64.deb",
+          "size": 15790844,
+          "sha256": "de68a211f0453941604e4bd89d51d98218583810f3f5b7dd3f12d4635d70cfe1"
+        },
+        {
+          "architecture": "arm64",
+          "version": "0.1.0-12",
+          "filename": "pool/main/f/fyshsaver/fyshsaver_0.1.0-12_arm64.deb",
+          "size": 14240732,
+          "sha256": "670e3196ccf9e561359ea82798dea7403e56b2da48c63ced0508e4276a32099b"
+        },
+        {
+          "architecture": "i386",
+          "version": "0.1.0-12",
+          "filename": "pool/main/f/fyshsaver/fyshsaver_0.1.0-12_i386.deb",
+          "size": 14828716,
+          "sha256": "48a975abdf6a011ca26450843bafe97d5ab834ab38df48032808ef4870115909"
+        }
+      ]
+    },
+    {
       "name": "tyde",
       "version": "0.4.99-5",
       "component": "main",
@@ -110,7 +143,7 @@
       "description": "FyshOS desktop environment",
       "homepage": "https://fyshos.com",
       "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
-      "installedSize": 75873280,
+      "installedSize": 72075264,
       "downloads": [
         {
           "architecture": "amd64",

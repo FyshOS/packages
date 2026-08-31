@@ -5,44 +5,44 @@ Origin: FyshOS
 Label: FyshOS
 Suite: stable
 Codename: stable
-Date: Mon, 31 Aug 2026 11:11:20 UTC
-Valid-Until: Tue, 31 Aug 2027 11:11:20 UTC
+Date: Mon, 31 Aug 2026 19:58:03 UTC
+Valid-Until: Tue, 31 Aug 2027 19:58:03 UTC
 Architectures: amd64 arm64 i386
 Components: main
 Description: FyshOS package repository
 MD5Sum:
- 4f7f8875be6c74d1b2e5cea4b6c6c64e             2123 main/binary-amd64/Packages
- df053e6e2d96716fda248911045a7b45              871 main/binary-amd64/Packages.gz
+ 6c2ff440035075c34bcd0160ab184e3e             2675 main/binary-amd64/Packages
+ b1c375dd4846565865972796d0b7cbae             1008 main/binary-amd64/Packages.gz
  fcc1c712f6778645ebd5fe848bb3865c               81 main/binary-amd64/Release
- 7320815f43a01c5bc619bef9c5e69f74             2123 main/binary-arm64/Packages
- 7e3ae2d37130d63d0c921d013168d35f              875 main/binary-arm64/Packages.gz
+ 2d35113f6e23f55dff98e0bb52f1d7fd             2675 main/binary-arm64/Packages
+ 45369e102d9647b1f2bdec3aed5bb436             1009 main/binary-arm64/Packages.gz
  8df3d956882aae4dd6e70f8638006b4c               81 main/binary-arm64/Release
- 1f101f8bb0af71af741cadd0c2e06cbb             2115 main/binary-i386/Packages
- 8f10f306050e82788c687c3723328d4b              874 main/binary-i386/Packages.gz
+ 1ab4a09b8660d07480e3559446b49eb5             2665 main/binary-i386/Packages
+ 4722d9448c6bb1484803ef4c5030b27e             1013 main/binary-i386/Packages.gz
  4445fafb2cbffb767be666600f1b1cd4               80 main/binary-i386/Release
 SHA256:
- 2b7e5e06b9b7f55f84c82f113ad29fcaa368e5ff855f066d4174431f552639d1             2123 main/binary-amd64/Packages
- 38ce7786522dd84f58e829bb4e2fcc5ff24313c426f9e57501afff2349c6ba24              871 main/binary-amd64/Packages.gz
+ 2358f079c8875e9df188466e4735424b0b681b7c8b252f9391f92a8881e4db99             2675 main/binary-amd64/Packages
+ 21ca9c2eeb62084a47274bd0546d799964fc77421be2096c64c906b2fb7db01c             1008 main/binary-amd64/Packages.gz
  ee4b6be87f354c8bbce231a9d8b6b616769e48c65a0028b4d06fff1fe0b28a10               81 main/binary-amd64/Release
- 97a905e9a75c813aa4ba5337d36b727fbbac4eac33af5cf412d26f5dea3e9b3a             2123 main/binary-arm64/Packages
- 5bcd72abb5b2b2a71223a75825a82dd0efc3ed84fd01175ea5ab7faa073461d7              875 main/binary-arm64/Packages.gz
+ ae42728e114f5088a29235d983dd3b79658499e3e8dbc355a0699ff867fe9f42             2675 main/binary-arm64/Packages
+ ed7458504293ba24f4683aa2388e7369e6b579afdac488df83a9855860c1347e             1009 main/binary-arm64/Packages.gz
  8ba103997c57b511eaa71d5ece1c7b45b947ef734c13e27c0a10f0825953e594               81 main/binary-arm64/Release
- 38b8459bbb852be84e0eefd2d6d81365b2877f101e193d53f3fe140645c4c99b             2115 main/binary-i386/Packages
- 7eff773ec16a8a56041f452598dd908b6f893c5fcc80a4dde59a67ce4e13f940              874 main/binary-i386/Packages.gz
+ 5b8a2ab6157c5967c55d73394181c374710ab4e6f9be7cc1938c167f1889e267             2665 main/binary-i386/Packages
+ b2b1f505be56eb9377fa3042f65635b33758512b4e876f8462cfc1f5cc0bb68f             1013 main/binary-i386/Packages.gz
  6efdd23208b33ac028eab3ef05749b1cca87ca2731bef83538f9cf387e9de789               80 main/binary-i386/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE9Q9WMkxg0gF/FLnoaxZMqekkhEIFAmqVYVgACgkQaxZMqekk
-hEIC7g/7BtGrDA8bi/FrhosY6uGyOSnQeUZgOogkMvTJ8CXq6AMQ3kONpazIjQ9y
-dy2Cj/mtZGZwA7ZVxn6bUzzEx3lx0+tpNcR8h6sXrR3keETRs+oKAq6wS7dQBcai
-fqtklkn0YU5rwkOi1r0D997TQx+BK1LJ+yp7DyAwKRe5YWQeGZUjRicXdulaa9iV
-vxY+9VUE4U1teNnBX/rhW/88g95IoERQfvjYZfbn5Dnw2mVUKtAc+Pn9XsoTQZ7Z
-YW2ohRSZdql+ZcrLiGRvilngMA+oaJuZv4KbwU2oh1TuDwHX4g1i0VydKmvyrKWI
-H2L3TwGSwj7xeMNgrnz6Qd8yZ5c6WUPm7CzjyQp0s5VIZ9D4LmkJcWp8uKHpV/3n
-ur/qn604ZNUWMu5yl7fQxkgSrGIXBHGAQ1dd6z+IZNlDBBb98LMfbaFs4JLu0q7v
-FHXhvEWX9eDBPUSB1MhDSQjzyCmGT8/lTWXex9Ud81aQFjVf90QM1MW9LhDcOPcG
-fxaAlo3PkoDfCcKID+nurW+3Jweicz4era96z1eD28Oit84g7Jas2myjMu0nBGo6
-3ECYUqgw7AWjxcGHn8RgdTxa3cBuoCJf7ETWaSr2E4x5hMWRnF/fzV3OXZCy5Xc8
-caj8GyqUrx8pdUc95frG+zdNjqaEIaqLQxYr3oQnC4/KOAXH3OU=
-=2FNN
+iQIzBAEBCgAdFiEE9Q9WMkxg0gF/FLnoaxZMqekkhEIFAmqV3MsACgkQaxZMqekk
+hELEyw//dhlgg+SlBu4dZ5tDHb/oZuEDvy3wTkA9UUDPqu2SA1DSm5TpHdy0fxXv
+psGsN0jzo86oer8rtD8xos6iUkz7vrHMdoNYHshSA8RXWvZWoqtqM2x9tpHNe+MW
++11F/5ojnoDQPva9BHVhUyuUoM6BFeW9PeUlsUvn3P99+quLnEE7yKnA/2FvxOaK
+nppJcvxXeiHf5PRIyIEWinKZIJC0eAWQTVCH8RPANaREJiQ/dlS6CJzOWD0/TPyH
+M04FY/PjAnoovUEIwLdkLgTTzeaTrUcj23sWW3tdFaO/rw43sVFkB3MPr1xhucfu
+7Cm66El8Ap4GBa5uWY3lmP8fEVt6AkpLE8to22N6C9jnBVMZz4n8z70MxpLIIi+V
+21eklxNyybjzbjGRxsW2iZ/khrBTfibmrgdy3Db8gHYxkbgtCrsgGab5ErjkNIrZ
+g+oPPGiOx3HvzRBoqGRMdwrh7BBFJKnS29cO4hhKhvbQAgd/1LRSymuO+eIVSzef
+ZrxxhqSajF/LCoTtGb7sSItVKHrOvOlN53BwiFPBTUy0rMAIfVmvNPE2WdB7dtPt
+32bNT17v8m8VHmdayzPpBE1gPFuA/G4hC8WAXN1rioQmz4vtLV+T5QPWjl/CAgbH
+M07MTVtziCoQ/sQxoUUBH5z4X4aBKYjqiZid5OW8goJiB4+91kw=
+=27Z2
 -----END PGP SIGNATURE-----

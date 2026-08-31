@@ -45,6 +45,22 @@ MD5sum: 373ac6f633a385030e8af1cf6bcea671
 SHA1: e6bc994759c5c675635f3feb45907ad2d4cb6cfd
 SHA256: 07adbabf2b5c29478130bc9afdb8e48cb9a7e6df2ce412f241bb415c7f879c37
 
+Package: fyshsaver
+Version: 0.1.0-12
+Architecture: i386
+Maintainer: Andy Williams <andy@fyne.io>
+Installed-Size: 30496
+Depends: libc6 (>= 2.34), libgl1, libpam0g (>= 0.99.7.1), libwayland-client0 (>= 1.20.0)
+Section: x11
+Priority: optional
+Homepage: https://fyshos.com
+Description: FyshOS screen saver and locker
+Filename: pool/main/f/fyshsaver/fyshsaver_0.1.0-12_i386.deb
+Size: 14828716
+MD5sum: 28de5b6ce4ada1758a80ba90731c0d57
+SHA1: 2b8833cf60c8536378af52e548db5eb37c98e5c1
+SHA256: 48a975abdf6a011ca26450843bafe97d5ab834ab38df48032808ef4870115909
+
 Package: tyde
 Version: 0.4.99-5
 Architecture: i386
