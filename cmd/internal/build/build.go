@@ -72,11 +72,23 @@ func Package(opts Options) ([]*Result, error) {
 		logf = func(string, ...any) {}
 	}
 
-	source, err := filepath.Abs(opts.SourceDir)
+	// The build runs from the project root even when only one package inside it
+	// is wanted, so imports of the project's own packages and any assets
+	// referenced from outside the command directory still resolve.
+	root, pkg, err := splitPackage(opts.SourceDir)
 	if err != nil {
 		return nil, err
 	}
-	app, err := LoadMetadata(source)
+
+	// FyneApp.toml usually sits at the root, but a project whose command lives
+	// in a subdirectory may keep it there instead.
+	metaDir := root
+	if pkg != "." {
+		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(pkg), MetadataName)); err == nil {
+			metaDir = filepath.Join(root, filepath.FromSlash(pkg))
+		}
+	}
+	app, err := LoadMetadata(metaDir)
 	if err != nil {
 		return nil, err
 	}
@@ -98,14 +110,18 @@ func Package(opts Options) ([]*Result, error) {
 	// The bumping happens inside the container against the mounted source, so
 	// restore the number that was actually published however the build ends.
 	defer func() {
-		if err := setBuildNumber(source, number); err != nil {
+		if err := setBuildNumber(metaDir, number); err != nil {
 			logf("could not record build %d in %s: %v", number, MetadataName, err)
 		}
 	}()
 
-	logf("cross-building %s %s (build %d) for %s",
-		app.Details.Name, app.Details.Version, number, strings.Join(opts.Arches, ", "))
-	if err := runFyneCross(source, opts, number); err != nil {
+	where := ""
+	if pkg != "." {
+		where = " from " + pkg
+	}
+	logf("cross-building %s %s (build %d)%s for %s",
+		app.Details.Name, app.Details.Version, number, where, strings.Join(opts.Arches, ", "))
+	if err := runFyneCross(root, pkg, app, opts, number); err != nil {
 		return nil, err
 	}
 
@@ -121,7 +137,7 @@ func Package(opts Options) ([]*Result, error) {
 
 	var results []*Result
 	for _, arch := range opts.Arches {
-		bundle := bundlePath(source, app.Details.Name, arch)
+		bundle := bundlePath(root, app.Details.Name, arch)
 		if _, err := os.Stat(bundle); err != nil {
 			return nil, fmt.Errorf("fyne-cross produced no %s bundle: %w", arch, err)
 		}
@@ -149,6 +165,37 @@ func Package(opts Options) ([]*Result, error) {
 		})
 	}
 	return results, nil
+}
+
+// splitPackage separates the project root from the package to build.
+//
+// A relative path below the working directory names a package inside the
+// project here: "fyshpkg package ./cmd/fyshsaver" builds that command with the
+// whole checkout around it. Anything else - ".", an absolute path, or a path
+// starting ".." - names a project root in its own right.
+func splitPackage(arg string) (root, pkg string, err error) {
+	if arg == "" {
+		arg = "."
+	}
+	if filepath.IsAbs(arg) {
+		abs, err := filepath.Abs(arg)
+		return abs, ".", err
+	}
+
+	clean := filepath.Clean(arg)
+	if clean == "." || strings.HasPrefix(clean, "..") {
+		abs, err := filepath.Abs(clean)
+		return abs, ".", err
+	}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", "", err
+	}
+	if _, err := os.Stat(filepath.Join(cwd, clean)); err != nil {
+		return "", "", err
+	}
+	return cwd, "./" + filepath.ToSlash(clean), nil
 }
 
 // bundlePath is where fyne-cross leaves the bundle for one architecture.
@@ -232,13 +279,15 @@ func resolve(app *FyneApp, opts Options, number int) (*spec, error) {
 	return s, nil
 }
 
-// runFyneCross builds every architecture in one invocation.
+// runFyneCross builds every architecture in one invocation, from the project
+// root, building only pkg when that is not the whole project.
 //
-// fyne-cross reads FyneApp.toml from its working directory, not from -dir, so
-// it is run inside the source directory and picks up the application's name,
-// id, icon and version by itself. Only the build number is forced, to keep
-// every architecture in the release on the same one.
-func runFyneCross(source string, opts Options, number int) error {
+// The application's identity is passed explicitly rather than left to
+// fyne-cross, which reads FyneApp.toml from its own working directory: that is
+// the root here, and the file may well sit beside the command instead. Without
+// this, a subdirectory build would be named after the root and stamped version
+// 1.0.0. The build number is pinned so every architecture shares one.
+func runFyneCross(root, pkg string, app *FyneApp, opts Options, number int) error {
 	if _, err := exec.LookPath("fyne-cross"); err != nil {
 		return fmt.Errorf("fyne-cross is not installed: go install github.com/fyne-io/fyne-cross@latest")
 	}
@@ -248,22 +297,53 @@ func runFyneCross(source string, opts Options, number int) error {
 		arches = append(arches, crossArch[arch])
 	}
 
-	args := []string{"linux", "--arch", strings.Join(arches, ","), "--app-build", strconv.Itoa(number)}
+	args := []string{
+		"linux",
+		"--arch", strings.Join(arches, ","),
+		"--name", app.Details.Name,
+		"--app-build", strconv.Itoa(number),
+	}
+	if app.Details.Version != "" {
+		args = append(args, "--app-version", app.Details.Version)
+	}
+	if app.Details.ID != "" {
+		args = append(args, "--app-id", app.Details.ID)
+	}
+	if icon := iconPath(root, app); icon != "" {
+		args = append(args, "--icon", icon)
+	}
 	if opts.Release {
 		args = append(args, "--release")
 	}
 	if opts.Tags != "" {
 		args = append(args, "--tags", opts.Tags)
 	}
+	if pkg != "." {
+		args = append(args, pkg)
+	}
 
 	cmd := exec.Command("fyne-cross", args...)
-	cmd.Dir = source
+	cmd.Dir = root
 	cmd.Stdout = os.Stderr // keep our stdout clean for the tool's own output
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("fyne-cross %s: %w (is a container engine running?)", strings.Join(args, " "), err)
 	}
 	return nil
+}
+
+// iconPath rewrites the icon named in FyneApp.toml to be relative to the
+// project root, since that is where fyne-cross resolves it from. A command in
+// a subdirectory typically points back up at a shared asset.
+func iconPath(root string, app *FyneApp) string {
+	if app.Details.Icon == "" {
+		return ""
+	}
+	rel, err := filepath.Rel(root, filepath.Join(app.dir, app.Details.Icon))
+	if err != nil {
+		return ""
+	}
+	return filepath.ToSlash(rel)
 }
 
 // unpack extracts a fyne bundle into staging, dropping the bundle's top level

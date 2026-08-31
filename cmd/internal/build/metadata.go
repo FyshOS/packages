@@ -22,6 +22,10 @@ type FyneApp struct {
 	Website     string
 	Details     AppDetails
 	LinuxAndBSD *LinuxAndBSD
+
+	// dir is where the file was read from, so paths inside it that are
+	// relative to it - the icon - can be resolved later.
+	dir string
 }
 
 // AppDetails is the [Details] table: the application's identity and version.
@@ -54,7 +58,7 @@ func LoadMetadata(dir string) (*FyneApp, error) {
 		return nil, err
 	}
 
-	app := &FyneApp{}
+	app := &FyneApp{dir: dir}
 	if err := toml.Unmarshal(raw, app); err != nil {
 		return nil, fmt.Errorf("%s: %w", name, err)
 	}

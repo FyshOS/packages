@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-31T10:08:54.950904301Z",
+  "generated": "2026-08-31T11:11:27.203802754Z",
   "suites": [
     "stable"
   ],
@@ -45,7 +45,7 @@
       "description": "Fyne Applications",
       "homepage": "https://apps.fyne.io",
       "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
-      "installedSize": 27301888,
+      "installedSize": 26493952,
       "downloads": [
         {
           "architecture": "amd64",
@@ -67,6 +67,38 @@
           "filename": "pool/main/f/fyne-applications/fyne-applications_0.3.0-5_i386.deb",
           "size": 10578076,
           "sha256": "020627f7763a57c26f7a0c817efc3785b8617c8daff9939668b5b028d5a1381b"
+        }
+      ]
+    },
+    {
+      "name": "fyneterm",
+      "version": "0.1.0-4",
+      "component": "main",
+      "section": "misc",
+      "description": "FyneTerm",
+      "maintainer": "Andy Williams \u003candy@fyne.io\u003e",
+      "installedSize": 26319872,
+      "downloads": [
+        {
+          "architecture": "amd64",
+          "version": "0.1.0-4",
+          "filename": "pool/main/f/fyneterm/fyneterm_0.1.0-4_amd64.deb",
+          "size": 9798716,
+          "sha256": "6b9c6998fbc434b0ecdedc28d1363b8bb4a576d1dca64117bb014a92dda2e547"
+        },
+        {
+          "architecture": "arm64",
+          "version": "0.1.0-4",
+          "filename": "pool/main/f/fyneterm/fyneterm_0.1.0-4_arm64.deb",
+          "size": 8967652,
+          "sha256": "40c798eb65b8b52d234bc775c2608fe1ab3e13c4c0509a9e3e32494b6d00c9f9"
+        },
+        {
+          "architecture": "i386",
+          "version": "0.1.0-4",
+          "filename": "pool/main/f/fyneterm/fyneterm_0.1.0-4_i386.deb",
+          "size": 9440324,
+          "sha256": "07adbabf2b5c29478130bc9afdb8e48cb9a7e6df2ce412f241bb415c7f879c37"
         }
       ]
     },

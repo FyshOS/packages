@@ -30,6 +30,21 @@ MD5sum: 58e66b4d69350255918a3c842c4e63b9
 SHA1: d4cbbe08f2c4b37f0626db120704baed608a147a
 SHA256: 020627f7763a57c26f7a0c817efc3785b8617c8daff9939668b5b028d5a1381b
 
+Package: fyneterm
+Version: 0.1.0-4
+Architecture: i386
+Maintainer: Andy Williams <andy@fyne.io>
+Installed-Size: 24798
+Depends: libc6, libgl1, libx11-6, libxcursor1, libxi6, libxinerama1, libxrandr2, libxxf86vm1
+Section: misc
+Priority: optional
+Description: FyneTerm
+Filename: pool/main/f/fyneterm/fyneterm_0.1.0-4_i386.deb
+Size: 9440324
+MD5sum: 373ac6f633a385030e8af1cf6bcea671
+SHA1: e6bc994759c5c675635f3feb45907ad2d4cb6cfd
+SHA256: 07adbabf2b5c29478130bc9afdb8e48cb9a7e6df2ce412f241bb415c7f879c37
+
 Package: tyde
 Version: 0.4.99-5
 Architecture: i386

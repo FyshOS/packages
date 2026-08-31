@@ -2,28 +2,28 @@ Origin: FyshOS
 Label: FyshOS
 Suite: stable
 Codename: stable
-Date: Mon, 31 Aug 2026 10:08:46 UTC
-Valid-Until: Tue, 31 Aug 2027 10:08:46 UTC
+Date: Mon, 31 Aug 2026 11:11:20 UTC
+Valid-Until: Tue, 31 Aug 2027 11:11:20 UTC
 Architectures: amd64 arm64 i386
 Components: main
 Description: FyshOS package repository
 MD5Sum:
- 4f7cf270e4dd8184f8e2939c5e18d35c             1623 main/binary-amd64/Packages
- 82a1b323f3311056ba879f2a62d1ceef              743 main/binary-amd64/Packages.gz
+ 4f7f8875be6c74d1b2e5cea4b6c6c64e             2123 main/binary-amd64/Packages
+ df053e6e2d96716fda248911045a7b45              871 main/binary-amd64/Packages.gz
  fcc1c712f6778645ebd5fe848bb3865c               81 main/binary-amd64/Release
- aac93d81212c50868f22b9a0ec5435f5             1623 main/binary-arm64/Packages
- 5b4b74da4f54fede126e48117b773304              745 main/binary-arm64/Packages.gz
+ 7320815f43a01c5bc619bef9c5e69f74             2123 main/binary-arm64/Packages
+ 7e3ae2d37130d63d0c921d013168d35f              875 main/binary-arm64/Packages.gz
  8df3d956882aae4dd6e70f8638006b4c               81 main/binary-arm64/Release
- 559f7b1507a53ab7b78a8a2add1a0804             1617 main/binary-i386/Packages
- 81ddaffa131dcb7ff575a9ea411513ab              745 main/binary-i386/Packages.gz
+ 1f101f8bb0af71af741cadd0c2e06cbb             2115 main/binary-i386/Packages
+ 8f10f306050e82788c687c3723328d4b              874 main/binary-i386/Packages.gz
  4445fafb2cbffb767be666600f1b1cd4               80 main/binary-i386/Release
 SHA256:
- 5a381618c5006a7c15c3d8a2620b88fe757ce2702718a112ab2ccdc423916947             1623 main/binary-amd64/Packages
- 82ab224d3f843672b7cd72c8241824e2a151110c0ec3ac16b40742afa4dad70b              743 main/binary-amd64/Packages.gz
+ 2b7e5e06b9b7f55f84c82f113ad29fcaa368e5ff855f066d4174431f552639d1             2123 main/binary-amd64/Packages
+ 38ce7786522dd84f58e829bb4e2fcc5ff24313c426f9e57501afff2349c6ba24              871 main/binary-amd64/Packages.gz
  ee4b6be87f354c8bbce231a9d8b6b616769e48c65a0028b4d06fff1fe0b28a10               81 main/binary-amd64/Release
- 22015b82d151cd496e176ac53ce812a88ddf9e564e4638443d8672a3e56fc972             1623 main/binary-arm64/Packages
- 4d70b129238fd537527d6ef50885eb4aabf49fbaee44d555233ece9ece7450cf              745 main/binary-arm64/Packages.gz
+ 97a905e9a75c813aa4ba5337d36b727fbbac4eac33af5cf412d26f5dea3e9b3a             2123 main/binary-arm64/Packages
+ 5bcd72abb5b2b2a71223a75825a82dd0efc3ed84fd01175ea5ab7faa073461d7              875 main/binary-arm64/Packages.gz
  8ba103997c57b511eaa71d5ece1c7b45b947ef734c13e27c0a10f0825953e594               81 main/binary-arm64/Release
- 622ff0c2ef63e91f307e5595ceac75fbf3fc67e0a7c27c7fd3df3a93b5222663             1617 main/binary-i386/Packages
- 8a1aceba3d9934064e62c7443ace7ece003ceae83a5dea4581ffa8475c4ad86d              745 main/binary-i386/Packages.gz
+ 38b8459bbb852be84e0eefd2d6d81365b2877f101e193d53f3fe140645c4c99b             2115 main/binary-i386/Packages
+ 7eff773ec16a8a56041f452598dd908b6f893c5fcc80a4dde59a67ce4e13f940              874 main/binary-i386/Packages.gz
  6efdd23208b33ac028eab3ef05749b1cca87ca2731bef83538f9cf387e9de789               80 main/binary-i386/Release

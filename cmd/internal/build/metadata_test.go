@@ -145,3 +145,69 @@ func TestSetBuildNumberWhenMissing(t *testing.T) {
 		t.Errorf("Name = %q, want it preserved", app.Details.Name)
 	}
 }
+
+func TestSplitPackage(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "cmd", "fyshsaver"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	restore, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chdir(restore)
+
+	// A subdirectory names a package inside the project here, so the root
+	// stays put and only the package narrows.
+	for _, arg := range []string{"./cmd/fyshsaver", "cmd/fyshsaver"} {
+		root, pkg, err := splitPackage(arg)
+		if err != nil {
+			t.Fatalf("splitPackage(%q): %v", arg, err)
+		}
+		if pkg != "./cmd/fyshsaver" {
+			t.Errorf("splitPackage(%q) package = %q, want ./cmd/fyshsaver", arg, pkg)
+		}
+		if filepath.Base(root) != filepath.Base(dir) {
+			t.Errorf("splitPackage(%q) root = %q, want the working directory", arg, root)
+		}
+	}
+
+	// Everything else names a project root in its own right.
+	for _, arg := range []string{"", ".", dir} {
+		_, pkg, err := splitPackage(arg)
+		if err != nil {
+			t.Fatalf("splitPackage(%q): %v", arg, err)
+		}
+		if pkg != "." {
+			t.Errorf("splitPackage(%q) package = %q, want .", arg, pkg)
+		}
+	}
+
+	if _, _, err := splitPackage("./nope"); err == nil {
+		t.Error("splitPackage on a missing directory should fail")
+	}
+}
+
+func TestIconPath(t *testing.T) {
+	// A command in a subdirectory pointing back at a shared asset, which has
+	// to be rewritten relative to the root fyne-cross runs from.
+	app := &FyneApp{dir: "/src/cmd/fyshsaver"}
+	app.Details.Icon = "../../frames/fysh.png"
+	if got := iconPath("/src", app); got != "frames/fysh.png" {
+		t.Errorf("iconPath = %q, want frames/fysh.png", got)
+	}
+
+	app = &FyneApp{dir: "/src"}
+	app.Details.Icon = "Icon.png"
+	if got := iconPath("/src", app); got != "Icon.png" {
+		t.Errorf("iconPath = %q, want Icon.png", got)
+	}
+
+	if got := iconPath("/src", &FyneApp{dir: "/src"}); got != "" {
+		t.Errorf("iconPath with no icon = %q, want empty", got)
+	}
+}
